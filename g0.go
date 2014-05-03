@@ -5,17 +5,20 @@ import (
 	"crypto/tls"
 	//"errors"
 	"fmt"
+	"g0/api"
 	"github.com/thoj/go-ircevent"
+	"os"
 	"regexp"
-	//"strconv"
-	//"time"
-	"g0/apitest"
 )
 
 var urlregex = regexp.MustCompile(`((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)`)
 
 func main() {
-	api := Api.NewApi(":31337")
+	api, err := Api.NewApi(":31337")
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(-1)
+	}
 	go api.Run()
 	ircCon := irc.IRC("Churchill", "PrimeMinister")
 	ircCon.VerboseCallbackHandler = false

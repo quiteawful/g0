@@ -2,8 +2,7 @@
 package Api
 
 import (
-	_ "errors"
-	"fmt"
+	"errors"
 	"github.com/ant0ine/go-json-rest/rest"
 	"net/http"
 )
@@ -21,25 +20,11 @@ type Api struct {
 	addr string
 }
 
-func main() {
-	fmt.Println("test")
-	handler := rest.ResourceHandler{
-		EnableRelaxedContentType: true,
-		EnableStatusService:      true,
-		XPoweredBy:               "soda-api",
+func NewApi(addr string) (*Api, error) {
+	if addr == "" {
+		return nil, errors.New("empty addr")
 	}
-	handler.SetRoutes(
-		&rest.Route{"GET", "/api/:id", GetIDstuff},
-		&rest.Route{"GET", "/.status",
-			func(w rest.ResponseWriter, r *rest.Request) {
-				w.WriteJson(handler.GetStatus())
-			},
-		},
-	)
-	http.ListenAndServe("31337", &handler)
-}
-func NewApi(addr string) *Api {
-	return &Api{addr}
+	return &Api{addr}, nil
 }
 func (a *Api) Run() (err error) {
 	handler := rest.ResourceHandler{
