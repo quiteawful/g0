@@ -9,11 +9,14 @@ import (
 	"regexp"
 	//"strconv"
 	//"time"
+	"g0/apitest"
 )
 
 var urlregex = regexp.MustCompile(`((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)`)
 
 func main() {
+	api := Api.NewApi(":31337")
+	go api.Run()
 	ircCon := irc.IRC("Churchill", "PrimeMinister")
 	ircCon.VerboseCallbackHandler = false
 	ircCon.UseTLS = true
@@ -32,6 +35,6 @@ func main() {
 func parseIrc(e *irc.Event, ircCon *irc.Connection) {
 	if urlregex.MatchString(e.Message()) {
 		urlString := urlregex.FindStringSubmatch(e.Message())
-		ircCon.Privmsg(e.Arguments[0], ">" + urlString[0] )
+		ircCon.Privmsg(e.Arguments[0], ">"+urlString[0])
 	}
 }
