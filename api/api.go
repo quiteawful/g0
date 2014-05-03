@@ -8,8 +8,10 @@ import (
 )
 
 type IDTest struct {
-	Page   string  `json:"page"`
-	Images []Image `json:"images"`
+	Page     string  `json:"page"`
+	ImageSrc string  `json:"image-src"`
+	ThumbSrc string  `json:"thumb-src"`
+	Images   []Image `json:"images"`
 }
 type Image struct {
 	Img   string `json:"img"`
