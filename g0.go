@@ -23,13 +23,10 @@ func main() {
 	var err error
 	conf := new(JSONconf)
 	Init(conf)
-	//conf.Bot = IrcBot.NewBot("g0bot", "g0bot")
-	ircbot := IrcBot.NewBot("g0bot", "g0bot")
-	go ircbot.Run("tardis.nerdlife.de:6697", "#amelie", "#g0")
-
+	conf.Bot.LinkChannel = make(chan string)
 	//hässliche blocking schleife ist hässlich
 	for true {
-		_, err = util.DownloadImage(<-ircbot.LinkChannel)
+		_, err = util.DownloadImage(<-conf.Bot.LinkChannel)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
@@ -44,4 +41,5 @@ func Init(conf *JSONconf) {
 		fmt.Println(err.Error())
 	}
 	go conf.Rest.Run()
+	go conf.Bot.Run()
 }
