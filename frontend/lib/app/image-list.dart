@@ -9,9 +9,9 @@ class ImageList {
   Element _loadingElement;
 
   /**
-   * Keps track of loaded page
+   * id of last loaded image
    */
-  int currentPage = 0;
+  int lastId = 0;
 
   String _imageSrc;
   String _thumbSrc;
@@ -34,13 +34,13 @@ class ImageList {
   void showImages(Map data){
     _imageSrc = data['image-src'];
     _thumbSrc = data['thumb-src'];
-    currentPage = data['page'];
 
     int delay = 0;
-    data['images'].forEach((image){
-      Element item = createItem(image);
+    data['images'].forEach((data){
+      Element item = createItem(data);
       _imageList.append(item);
       items.add(item);
+      lastId = data['id'];
       Future delayed = new Future.delayed(
           new Duration(milliseconds: delay),
           () => item.classes.add('loaded')

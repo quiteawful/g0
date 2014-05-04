@@ -6,26 +6,30 @@ part of G0;
 class FixtureApi implements Api {
 
   Map result;
+  int currentId = 0;
 
-  FixtureApi(int perPage){
+  FixtureApi(){
     result = {
-      'page' : 1,
       'image-src' : 'assets/images/',
       'thumb-src' : 'assets/images/',
       'images': []
     };
+  }
 
-    for(var i = 0; i < perPage; i++){
+  Future<Map> getImages({int offset: 0, int count: 20}){
+    print('load $count images from offset: $offset');
+    result['images'].clear();
+    for(var i = 0; i < count; i++){
+      currentId++;
       Map item = {
+        'id': currentId,
         'image': 'test1.jpg',
-        'thumb': 'testThumb1.jpg',
+        'thumb': 'test-thumb1.png',
       };
 
       result['images'].add(item);
     }
-  }
 
-  Future<Map> getImages({int page}){
     Completer compl = new Completer();
     Future f = new Future.delayed(
         new Duration(seconds: 1),

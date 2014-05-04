@@ -35,21 +35,21 @@ class G0 {
     imageList = new ImageList(imageListElement);
     centeredFloatList = new CenteredFloatList(imageListElement);
     infiniteLoad = new InfinteLoad(imageListElement);
-    _loadImages(1);
+    _loadImages(imageList.lastId, 10);
 
     infiniteLoad.onFire.listen((_){
-      _loadImages(2);
+      _loadImages(imageList.lastId, 10);
     });
   }
 
   /**
-   * Loads images per page from [api] async and shows loading spinner.
-   * Shows images after [api] call is finished.
+   * Loads [count] images older then [offset] async and shows loading spinner.
+   * Displays images after [api] call is finished.
    * Initializes [centeredFloatList] on first call.
    */
-  void _loadImages(int page){
+  void _loadImages(int offset, int count){
     imageList.showLoading();
-    Future<Map> future = api.getImages(page: 1);
+    Future<Map> future = api.getImages(offset: imageList.lastId, count: count);
     future.then((result) => imageList.showImages(result))
           .then((_){
              if(!centeredFloatList.isInitialized){
