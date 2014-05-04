@@ -1,6 +1,7 @@
 {
     "Imagepath": "/tmp/",
     "Thumbpath": "/tmp/",
+	"DBpath": "g0.db",
     "Rest": {
         "Addr": ":31337"
     },

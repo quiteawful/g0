@@ -15,13 +15,20 @@ type Bot struct {
 	Nickname    string "g0bot"
 	Realname    string "g0bot"
 	Connections []Conn
-	LinkChannel chan string
+	LinkChannel chan Link
 }
 
 type Conn struct {
 	Connection *irc.Connection
 	Address    string
 	Channels   []string
+}
+
+type Link struct {
+	URL     string
+	Network string
+	Channel string
+	Poster  string
 }
 
 func (b *Bot) Run() {
@@ -45,7 +52,7 @@ func (b *Bot) Run() {
 		if urlregex.MatchString(e.Message()) {
 			urlString := urlregex.FindStringSubmatch(e.Message())
 			ircCon.Privmsg(e.Arguments[0], ">"+urlString[0])
-			b.LinkChannel <- urlString[0]
+			b.LinkChannel <- Link{urlString[0], "unknown", "#unknown", e.Nick}
 		}
 	})
 
