@@ -16,15 +16,15 @@ type Db struct {
 }
 
 type Image struct {
-	id        int
-	hash      string
-	name      string
-	thumbnail string
-	timestamp time.Time
-	url       string
-	network   string
-	channel   string
-	user      string
+	Id        int
+	Hash      string
+	Name      string
+	Thumbnail string
+	Timestamp time.Time
+	Url       string
+	Network   string
+	Channel   string
+	User      string
 }
 
 func NewDb(DbFile string) (*Db, error) {
@@ -120,16 +120,28 @@ func (db *Db) GetImage(id int) (Image, error) {
 
 	result := Image{}
 	row.Scan(
-		&result.id,
-		&result.hash,
-		&result.name,
-		&result.thumbnail,
-		&result.timestamp,
-		&result.url,
-		&result.network,
-		&result.channel,
-		&result.user)
 
+
+
+
+
+
+
+
+
+
+
+=======
+		&result.Id,
+		&result.Hash,
+		&result.Name,
+		&result.Thumbnail,
+		&result.Timestamp,
+		&result.Url,
+		&result.Network,
+		&result.Channel,
+		&result.User)
+>>>>>>> 39bf81505785e53f4c3dd3e39748ae90d6b87c07
 	return result, nil
 }
 
@@ -157,15 +169,15 @@ func (db *Db) GetImages(start, offset int) ([]Image, error) {
 	for rows.Next() {
 		img := Image{}
 		err = rows.Scan(
-			&img.id,
-			&img.hash,
-			&img.name,
-			&img.thumbnail,
-			&img.timestamp,
-			&img.url,
-			&img.network,
-			&img.channel,
-			&img.user)
+			&img.Id,
+			&img.Hash,
+			&img.Name,
+			&img.Thumbnail,
+			&img.Timestamp,
+			&img.Url,
+			&img.Network,
+			&img.Channel,
+			&img.User)
 
 		if err != nil {
 			log.Fatalf("GetImages: %s\n", err)

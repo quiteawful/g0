@@ -16,7 +16,7 @@ class FixtureApi implements Api {
     };
   }
 
-  Future<Map> getImages({int offset: 0, int count: 20}){
+  Future<Map> getImages({String offset: '', int count: 20}){
     print('load $count images from offset: $offset');
     result['images'].clear();
     for(var i = 0; i < count; i++){

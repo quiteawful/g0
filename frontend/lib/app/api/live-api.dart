@@ -5,7 +5,7 @@ class LiveApi implements Api {
   String _host;
   LiveApi(this._host);
 
-  Future<Map> getImages({int offset: 0, int count: 20}){
+  Future<Map> getImages({String offset: '', int count: 20}){
 
   }
 }

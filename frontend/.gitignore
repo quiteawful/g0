@@ -1,6 +1,7 @@
 node_modules
-Gruntfile.js
 /web/assets/images/**.*
+/web/assets/css/**.*
+/cache
 
 packages
 .project
