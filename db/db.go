@@ -59,7 +59,6 @@ func NewDb(DbFile string) (*Db, error) {
 			return nil, err
 		}
 	}
-
 	return _db, nil
 }
 
@@ -130,6 +129,7 @@ func (db *Db) GetImage(id int) (Image, error) {
 		&result.network,
 		&result.channel,
 		&result.user)
+
 	return result, nil
 }
 
@@ -176,4 +176,26 @@ func (db *Db) GetImages(start, offset int) ([]Image, error) {
 	}
 
 	return result, nil
+}
+
+func (db *Db) DeleteImage(id int) bool {
+	if id < 1 {
+		return false
+	}
+
+	sql := "delete from " + db.DbImageTable + " where id = ?"
+	result, err := db.conn.Exec(sql, id)
+	affected, err := result.RowsAffected()
+	if err != nil {
+		log.Fatalf("DeleteImage: %s\n", err.Error())
+		return false
+	}
+	if affected != 1 {
+		return false
+	}
+	return true
+}
+
+func (db *Db) GetImageCount() (int, error) {
+	return 78, nil
 }

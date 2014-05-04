@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"os"
 	"testing"
 )
@@ -48,19 +47,10 @@ func TestGetImage(t *testing.T) {
 		t.Fatal("Failed to insert image.")
 	}
 
-	img, err := testDb.GetImage(1)
+	_, err = testDb.GetImage(1)
 	if err != nil {
 		t.Fatal("Failed to select image")
 	}
-	fmt.Printf("ID: %s\n", img.id)
-	fmt.Printf("Hash: %s\n", img.hash)
-	fmt.Printf("Name: %s\n", img.name)
-	fmt.Printf("Thumbnail: %s\n", img.thumbnail)
-	fmt.Printf("Timestamp: %s\n", img.timestamp.String())
-	fmt.Printf("Url: %s\n", img.url)
-	fmt.Printf("Network: %s\n", img.network)
-	fmt.Printf("Channel: %s\n", img.channel)
-	fmt.Printf("User: %s\n", img.user)
 }
 
 func TestGetImages(t *testing.T) {
@@ -92,5 +82,27 @@ func TestGetImages(t *testing.T) {
 	}
 	if len(img) != 5 {
 		t.Fatal("Requested 5 Images, got %d", len(img))
+	}
+}
+
+func TestDeleteImage(t *testing.T) {
+	defer os.Remove(dbfile)
+	testDb, err := NewDb(dbfile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = testDb.NewImage("hash", "datei.jpg", "thumb.jpg", "http://example.tld", "nerdlife", "#rumkugel", "Churchill")
+	if err != nil {
+		t.Fatal("Failed to insert image.")
+	}
+
+	if !testDb.DeleteImage(1) {
+		t.Fatal("Failed to delete image.")
+	}
+
+	_, err = testDb.GetImage(1)
+	if err == nil {
+		t.Fatalf("Failed to select image. %s", err.Error())
 	}
 }
