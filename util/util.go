@@ -50,7 +50,8 @@ func DownloadImage(link string) (filename string, errret error) {
 		}
 		b = append(b, buf[:n]...)
 		if err == io.EOF {
-			ioutil.WriteFile(newLenChars(6, StdChars)+"."+urlType[1], b, 0644)
+			filename = newLenChars(6, StdChars) + "." + urlType[1]
+			ioutil.WriteFile(filename, b, 0644)
 			return filename, nil
 		}
 	}
