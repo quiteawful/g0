@@ -8,7 +8,7 @@ import (
 	"g0/ircbot"
 	"g0/util"
 	"os"
-	"time"
+	//"time"
 )
 
 func main() {
@@ -27,6 +27,9 @@ func main() {
 
 	//hässliche blocking schleife ist hässlich
 	for true {
-		time.Sleep(10000000)
+		_, err = util.DownloadImage(<-ircbot.LinkChannel)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
 	}
 }
