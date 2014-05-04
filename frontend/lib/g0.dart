@@ -32,13 +32,13 @@ class G0 {
       return;
     }
     Element imageListElement = container.querySelector('.image-list');
-    imageList = new ImageList(imageListElement);
+    imageList = new ImageList(imageListElement, 150, 150);
     centeredFloatList = new CenteredFloatList(imageListElement);
     infiniteLoad = new InfinteLoad(imageListElement);
-    _loadImages(imageList.lastId, 10);
+    _loadImages(imageList.lastId, imageList.perPage);
 
     infiniteLoad.onFire.listen((_){
-      _loadImages(imageList.lastId, 10);
+      _loadImages(imageList.lastId, imageList.perPage);
     });
   }
 

@@ -7,11 +7,18 @@ class ImageList {
 
   Element _imageList;
   Element _loadingElement;
+  int _imageWidth;
+  int _imageHeight;
 
   /**
    * id of last loaded image
    */
   int lastId = 0;
+
+  /**
+   * Number of images which fit in one screen
+   */
+  int perPage = 0;
 
   String _imageSrc;
   String _thumbSrc;
@@ -21,10 +28,12 @@ class ImageList {
    */
   List<LIElement> items = new List<LIElement>();
 
-  ImageList(this._imageList){
+  ImageList(this._imageList, this._imageWidth, this._imageHeight){
+    _getPerPage();
     if(_imageList != null){
       _loadingElement = _imageList.querySelector('.loading');
     }
+    window.onResize.listen((_) => _getPerPage());
   }
 
   /**
@@ -78,5 +87,19 @@ class ImageList {
     a.append(img);
     li.append(a);
     return li;
+  }
+
+  void _getPerPage(){
+    int _pageWidth = window.innerWidth;
+    int _pageHeight = window.innerHeight - _imageList.offsetTop;
+
+    int newPerPage = (_pageWidth / _imageWidth).floor()
+                   * (_pageHeight / _imageHeight).ceil();
+
+    if(newPerPage != perPage){
+      print('change to $newPerPage images per page');
+      perPage = newPerPage;
+    }
+
   }
 }
