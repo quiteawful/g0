@@ -3,13 +3,14 @@ package Api
 
 import (
 	"errors"
+	"fmt"
+	"g0/db"
 	"github.com/ant0ine/go-json-rest/rest"
 	"net/http"
+	"strconv"
 )
 
 type IDTest struct {
-	Page     string  `json:"page"`
-	Count    string  `json:"count"`
 	ImageSrc string  `json:"image-src"`
 	ThumbSrc string  `json:"thumb-src"`
 	Images   []Image `json:"images"`
@@ -48,14 +49,28 @@ func (a *Api) Run() (err error) {
 	return nil
 }
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
-	offset := r.PathParam("offset")
-	if offset == "42" {
+	var imgreturn []Image
+
+	offset, _ := strconv.Atoi(r.PathParam("offset"))
+	count, _ := strconv.Atoi(r.PathParam("count"))
+	if offset == 42 {
 		rest.NotFound(w, r)
 		return
 	}
+	dbase, _ := db.NewDb("g0.db")
+	dbarray, err := dbase.GetImages(offset, count)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	for _, ele := range dbarray {
+		var tmpImage Image
+		tmpImage.ID = strconv.Itoa(ele.Id)
+		tmpImage.Img = ele.Url
+		tmpImage.Thumb = ele.Thumbnail
+		imgreturn = append(imgreturn, tmpImage)
+	}
 	w.WriteJson(
 		&IDTest{
-			Page:   offset,
-			Images: []Image{Image{"1", "foo", "bar"}},
+			Images: imgreturn,
 		})
 }

@@ -1,4 +1,3 @@
-// reminder.go
 package main
 
 import (
@@ -22,16 +21,18 @@ type JSONconf struct {
 	Bot       *IrcBot.Bot
 }
 
-func main() {
-	conf := new(JSONconf)
-	Init(conf)
-	conf.Bot.LinkChannel = make(chan IrcBot.Link)
+var Conf = new(JSONconf)
 
-	dbase, _ := db.NewDb(conf.DBpath)
+func main() {
+	//Conf := new(JSONconf)
+	Init(Conf)
+	Conf.Bot.LinkChannel = make(chan IrcBot.Link)
+
+	dbase, _ := db.NewDb(Conf.DBpath)
 
 	//hässliche blocking schleife ist hässlich
 	for true {
-		link := <-conf.Bot.LinkChannel
+		link := <-Conf.Bot.LinkChannel
 		f, err := util.DownloadImage(link.URL)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -45,13 +46,13 @@ func main() {
 	}
 }
 
-func Init(conf *JSONconf) {
+func Init(Conf *JSONconf) {
 	file, _ := os.Open("config.json")
 	decoder := json.NewDecoder(file)
-	err := decoder.Decode(conf)
+	err := decoder.Decode(Conf)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	go conf.Rest.Run()
-	go conf.Bot.Run()
+	go Conf.Rest.Run()
+	go Conf.Bot.Run()
 }
