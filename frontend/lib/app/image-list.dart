@@ -9,16 +9,21 @@ class ImageList {
   Element _loadingElement;
   int _imageWidth;
   int _imageHeight;
+  int _pageWidth;
+  int _pageHeight;
+
+  String host = window.location.hostname;
 
   /**
    * id of last loaded image
    */
-  int lastId = 0;
+  String lastId = '';
 
   /**
    * Number of images which fit in one screen
    */
   int perPage = 0;
+  int perRow = 0;
 
   String _imageSrc;
   String _thumbSrc;
@@ -49,7 +54,7 @@ class ImageList {
       Element item = createItem(data);
       _imageList.append(item);
       items.add(item);
-      lastId = data['id'];
+      lastId = data['id'].toString();
       Future delayed = new Future.delayed(
           new Duration(milliseconds: delay),
           () => item.classes.add('loaded')
@@ -84,14 +89,20 @@ class ImageList {
     AnchorElement a = new AnchorElement(href: '${_imageSrc}${data['image']}');
     ImageElement img = new ImageElement(src: '${_imageSrc}${data['thumb']}');
     li.classes.add('image-list-item');
+    li.dataset['data-id'] = data['id'].toString();
     a.append(img);
     li.append(a);
     return li;
   }
 
+  /**
+   * Updates [_pageWidth], [_pageHeight] and [perPage]. This is called after
+   * resize events
+   */
   void _getPerPage(){
-    int _pageWidth = window.innerWidth;
-    int _pageHeight = window.innerHeight - _imageList.offsetTop;
+    _pageWidth = window.innerWidth;
+    _pageHeight = window.innerHeight - _imageList.offsetTop;
+    perRow = (_pageWidth / _imageWidth).floor();
 
     int newPerPage = (_pageWidth / _imageWidth).floor()
                    * (_pageHeight / _imageHeight).ceil();
@@ -100,6 +111,5 @@ class ImageList {
       print('change to $newPerPage images per page');
       perPage = newPerPage;
     }
-
   }
 }

@@ -19,15 +19,11 @@ class G0 {
   ImageList imageList;
   InfinteLoad infiniteLoad;
 
-  G0(this.container, this.api){
-    _init();
-  }
-
   /**
    * Initializes [G0] on [container] and loads first page from [api]
-   *
+   * Named parameter [offset] is used for direkt linking
    */
-  void _init(){
+  G0(this.container, this.api, {offset: null}){
     if(container == null){
       return;
     }
@@ -35,7 +31,7 @@ class G0 {
     imageList = new ImageList(imageListElement, 150, 150);
     centeredFloatList = new CenteredFloatList(imageListElement);
     infiniteLoad = new InfinteLoad(imageListElement);
-    _loadImages(imageList.lastId, imageList.perPage);
+    _loadImages(offset, imageList.perPage);
 
     infiniteLoad.onFire.listen((_){
       _loadImages(imageList.lastId, imageList.perPage);
@@ -47,9 +43,9 @@ class G0 {
    * Displays images after [api] call is finished.
    * Initializes [centeredFloatList] on first call.
    */
-  void _loadImages(int offset, int count){
+  void _loadImages(String offset, int count){
     imageList.showLoading();
-    Future<Map> future = api.getImages(offset: imageList.lastId, count: count);
+    Future<Map> future = api.getImages(offset: offset, count: count);
     future.then((result) => imageList.showImages(result))
           .then((_){
              if(!centeredFloatList.isInitialized){
