@@ -1,0 +1,10 @@
+// Base colors
+$background-color: #222222;
+$text-color: #ffffff;
+$link-color: green;
+
+// Generated colors
+$border-color: darken($text-color, 70%);
+
+// Dimensions
+$list-item-width: 150px;

@@ -1,0 +1,64 @@
+library G0;
+
+import 'dart:html';
+import 'dart:async';
+
+part 'app/centered-float-list.dart';
+part 'app/api.dart';
+part 'app/api/fixture-api.dart';
+part 'app/api/live-api.dart';
+part 'app/image-list.dart';
+part 'app/infinite-load.dart';
+
+class G0 {
+
+  Element container;
+
+  Api api;
+  CenteredFloatList centeredFloatList;
+  ImageList imageList;
+  InfinteLoad infiniteLoad;
+
+  G0(this.container, this.api){
+    _init();
+  }
+
+  /**
+   * Initializes [G0] on [container] and loads first page from [api]
+   *
+   */
+  void _init(){
+    if(container == null){
+      return;
+    }
+    Element imageListElement = container.querySelector('.image-list');
+    imageList = new ImageList(imageListElement);
+    centeredFloatList = new CenteredFloatList(imageListElement);
+    infiniteLoad = new InfinteLoad(imageListElement);
+    _loadImages(1);
+
+    infiniteLoad.onFire.listen((_){
+      _loadImages(2);
+    });
+  }
+
+  /**
+   * Loads images per page from [api] async and shows loading spinner.
+   * Shows images after [api] call is finished.
+   * Initializes [centeredFloatList] on first call.
+   */
+  void _loadImages(int page){
+    imageList.showLoading();
+    Future<Map> future = api.getImages(page: 1);
+    future.then((result) => imageList.showImages(result))
+          .then((_){
+             if(!centeredFloatList.isInitialized){
+               centeredFloatList.init();
+             }
+             imageList.hideLoading();
+             infiniteLoad.updateTargetHeight();
+             infiniteLoad.activate();
+          }
+    );
+  }
+}

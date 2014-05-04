@@ -1,0 +1,24 @@
+@import "configs";
+@import "mixins";
+@import "app/header";
+@import "app/image-list";
+@import "app/image-list-item";
+
+* {
+  @include box-sizing(border-box);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  color: $text-color;
+}
+
+body {
+  background: $background-color;
+}
+
+a {
+  color: $link-color;
+}
