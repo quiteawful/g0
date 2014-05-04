@@ -115,11 +115,11 @@ func (db *Db) GetImage(id int) (Image, error) {
 		return Image{}, err
 	}
 
-	sql := "select * from " + db.DbImageTable + " where id = ?"
-	row := db.conn.QueryRow(sql, id)
+	_sql := "select * from " + db.DbImageTable + " where id = ?"
+	row := db.conn.QueryRow(_sql, id)
 
 	result := Image{}
-	row.Scan(
+	err = row.Scan(
 		&result.Id,
 		&result.Hash,
 		&result.Name,
@@ -129,6 +129,12 @@ func (db *Db) GetImage(id int) (Image, error) {
 		&result.Network,
 		&result.Channel,
 		&result.User)
+
+	if err == sql.ErrNoRows {
+		err = errors.New("Query returned zero rows.")
+		log.Fatalf("GetImage: %s %s\n", err.Error(), _sql)
+		return Image{}, err
+	}
 
 	return result, nil
 }
