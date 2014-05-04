@@ -15,6 +15,7 @@ type Bot struct {
 	Nickname    string "g0bot"
 	Realname    string "g0bot"
 	Connections []Conn
+	LinkChannel chan string
 }
 
 type Conn struct {
@@ -24,7 +25,7 @@ type Conn struct {
 }
 
 func NewBot(nickname string, realname string) *Bot {
-	return &Bot{nickname, realname, make([]Conn, 0)}
+	return &Bot{nickname, realname, make([]Conn, 0), make(chan string)}
 }
 
 func (b *Bot) Run(server string, channels ...string) {
@@ -44,15 +45,19 @@ func (b *Bot) Run(server string, channels ...string) {
 		}
 
 	})
-	ircCon.AddCallback("PRIVMSG", func(e *irc.Event) { parseIrc(e, ircCon) })
+	ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
+		if urlregex.MatchString(e.Message()) {
+			urlString := urlregex.FindStringSubmatch(e.Message())
+			//ircCon.Privmsg(e.Arguments[0], ">"+urlString[0])
+			b.LinkChannel <- urlString[0]
+		}
+	})
+
 	b.Connections = append(b.Connections, Conn{ircCon, server, channels})
 	ircCon.Loop()
 	fmt.Printf("IRC loop exited")
 }
 
 func parseIrc(e *irc.Event, ircCon *irc.Connection) {
-	if urlregex.MatchString(e.Message()) {
-		urlString := urlregex.FindStringSubmatch(e.Message())
-		ircCon.Privmsg(e.Arguments[0], ">"+urlString[0])
-	}
+
 }
