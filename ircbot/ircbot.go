@@ -57,7 +57,3 @@ func (b *Bot) Run(server string, channels ...string) {
 	ircCon.Loop()
 	fmt.Printf("IRC loop exited")
 }
-
-func parseIrc(e *irc.Event, ircCon *irc.Connection) {
-
-}
