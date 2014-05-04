@@ -17,7 +17,7 @@ var StdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 var imageregex = regexp.MustCompile(`image\/(.+)`)
 
 func DownloadImage(link string) (filename string, errret error) {
-	u, err := url.Parse(link)
+	_, err := url.Parse(link) // ./util.go:20: u declared and not used
 	if err != nil {
 		return "", err
 	}
