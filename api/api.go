@@ -21,7 +21,7 @@ type Image struct {
 }
 
 type Api struct {
-	addr string
+	Addr string
 }
 
 func NewApi(addr string) (*Api, error) {
@@ -44,7 +44,7 @@ func (a *Api) Run() (err error) {
 			},
 		},
 	)
-	http.ListenAndServe(a.addr, &handler)
+	http.ListenAndServe(a.Addr, &handler)
 	return nil
 }
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {

@@ -21,7 +21,6 @@ func DownloadImage(link string) (filename string, errret error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println(u.Fragment)
 	var bufa [64]byte
 	var b []byte
 	size := 0

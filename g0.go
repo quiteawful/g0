@@ -3,6 +3,7 @@ package main
 
 import (
 	//"errors"
+	"encoding/json"
 	"fmt"
 	"g0/api"
 	"g0/ircbot"
@@ -11,25 +12,34 @@ import (
 	//"time"
 )
 
-func main() {
-	api, err := Api.NewApi(":31337")
-	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(-1)
-	}
-	go api.Run()
-	_, err = util.DownloadImage("http://i.imgur.com/Uxq2dPU.gif")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	ircbot := IrcBot.NewBot("g0bot", "g0bot")
-	go ircbot.Run("tardis.nerdlife.de:6697", "#amelie", "#g0")
+type JSONconf struct {
+	Imagepath string
+	Thumbpath string
+	Rest      *Api.Api
+	Bot       *IrcBot.Bot
+}
 
+func main() {
+	var err error
+	conf := new(JSONconf)
+	Init(conf)
+	conf.Bot.LinkChannel = make(chan string)
 	//hässliche blocking schleife ist hässlich
 	for true {
-		_, err = util.DownloadImage(<-ircbot.LinkChannel)
+		_, err = util.DownloadImage(<-conf.Bot.LinkChannel)
 		if err != nil {
 			fmt.Println(err.Error())
 		}
 	}
+}
+
+func Init(conf *JSONconf) {
+	file, _ := os.Open("config.json")
+	decoder := json.NewDecoder(file)
+	err := decoder.Decode(conf)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	go conf.Rest.Run()
+	go conf.Bot.Run()
 }
