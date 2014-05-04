@@ -9,17 +9,19 @@ import (
 
 type IDTest struct {
 	Page     string  `json:"page"`
+	Count    string  `json:"count"`
 	ImageSrc string  `json:"image-src"`
 	ThumbSrc string  `json:"thumb-src"`
 	Images   []Image `json:"images"`
 }
 type Image struct {
+	ID    string `json:"id"`
 	Img   string `json:"img"`
 	Thumb string `json:"thumb"`
 }
 
 type Api struct {
-	addr string
+	Addr string
 }
 
 func NewApi(addr string) (*Api, error) {
@@ -35,25 +37,25 @@ func (a *Api) Run() (err error) {
 		XPoweredBy:               "soda-api",
 	}
 	handler.SetRoutes(
-		&rest.Route{"GET", "/api/:id", GetIDstuff},
+		&rest.Route{"GET", "/api/:offset/:count", GetIDstuff},
 		&rest.Route{"GET", "/.status",
 			func(w rest.ResponseWriter, r *rest.Request) {
 				w.WriteJson(handler.GetStatus())
 			},
 		},
 	)
-	http.ListenAndServe(a.addr, &handler)
+	http.ListenAndServe(a.Addr, &handler)
 	return nil
 }
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
-	id := r.PathParam("id")
-	if id == "42" {
+	offset := r.PathParam("offset")
+	if offset == "42" {
 		rest.NotFound(w, r)
 		return
 	}
 	w.WriteJson(
 		&IDTest{
-			Page:   id,
-			Images: []Image{Image{"foo", "bar"}},
+			Page:   offset,
+			Images: []Image{Image{"1", "foo", "bar"}},
 		})
 }

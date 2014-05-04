@@ -1,0 +1,17 @@
+node_modules
+Gruntfile.js
+/web/assets/images/**.*
+
+packages
+.project
+*.iml
+*.ipr
+*.iws
+.idea/
+*.dart.js
+*.js_
+*.js.deps
+*.js.map
+*.lock
+.buildlog
+web/out/*

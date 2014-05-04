@@ -1,0 +1,11 @@
+{
+  "name": "g0",
+  "version": "0.1.0",
+  "description": "Frontend for g0",
+  "main": "index.html",
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-sass": "~0.7.3",
+    "grunt-contrib-watch": "~0.6.1"
+  }
+}
