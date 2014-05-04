@@ -8,12 +8,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
+	"regexp"
 )
 
-const MAX_SIZE = 1048576
+const MAX_SIZE = 10485760
 
 var StdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+var imageregex = regexp.MustCompile(`image\/(.+)`)
 
 func DownloadImage(link string) (filename string, errret error) {
 	u, err := url.Parse(link)
@@ -24,6 +25,7 @@ func DownloadImage(link string) (filename string, errret error) {
 	var bufa [64]byte
 	var b []byte
 	size := 0
+	var urlType []string
 	buf := bufa[:]
 	res, err := http.Get(link)
 	if err != nil {
@@ -31,14 +33,14 @@ func DownloadImage(link string) (filename string, errret error) {
 	}
 	defer res.Body.Close()
 	if err != nil {
-		fmt.Println("asdf")
 		return "", err
 	}
 	for {
 		n, err := res.Body.Read(buf)
 		if size == 0 {
 			mime := http.DetectContentType(buf)
-			if strings.Contains(mime, "image") == false {
+			urlType = imageregex.FindStringSubmatch(mime)
+			if urlType == nil {
 				return "", fmt.Errorf("not an image: %q", mime)
 			}
 		}
@@ -48,7 +50,7 @@ func DownloadImage(link string) (filename string, errret error) {
 		}
 		b = append(b, buf[:n]...)
 		if err == io.EOF {
-			ioutil.WriteFile(newLenChars(6, StdChars)+".jpg", b, 0644)
+			ioutil.WriteFile(newLenChars(6, StdChars)+"."+urlType[1], b, 0644)
 			return filename, nil
 		}
 	}
