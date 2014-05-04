@@ -1,5 +1,7 @@
 node_modules
 /web/assets/images/**.*
+/web/assets/css/**.*
+/cache
 
 packages
 .project
