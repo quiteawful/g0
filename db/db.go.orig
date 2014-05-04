@@ -120,6 +120,18 @@ func (db *Db) GetImage(id int) (Image, error) {
 
 	result := Image{}
 	row.Scan(
+<<<<<<< HEAD
+		&result.id,
+		&result.hash,
+		&result.name,
+		&result.thumbnail,
+		&result.timestamp,
+		&result.url,
+		&result.network,
+		&result.channel,
+		&result.user)
+
+=======
 		&result.Id,
 		&result.Hash,
 		&result.Name,
@@ -129,7 +141,7 @@ func (db *Db) GetImage(id int) (Image, error) {
 		&result.Network,
 		&result.Channel,
 		&result.User)
-
+>>>>>>> 39bf81505785e53f4c3dd3e39748ae90d6b87c07
 	return result, nil
 }
 
