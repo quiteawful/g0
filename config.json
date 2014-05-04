@@ -1,0 +1,20 @@
+{
+    "Imagepath": "/tmp/",
+    "Thumbpath": "/tmp/",
+    "Rest": {
+        "Addr": ":31337"
+    },
+    "Bot": {
+        "Nickname": "g0bot",
+        "Realname": "g0bot",
+        "Connections": [
+            {
+                "Address": "tardis.nerdlife.de:6697",
+                "Channels": [
+                    "#g0",
+                    "#amelie"
+                ]
+            }
+        ]
+    }
+}
