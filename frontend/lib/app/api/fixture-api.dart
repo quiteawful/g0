@@ -22,9 +22,13 @@ class FixtureApi implements Api {
     for(var i = 0; i < count; i++){
       currentId++;
       Map item = {
-        'id': currentId,
-        'image': 'test1.jpg',
-        'thumb': 'test-thumb1.png',
+        'id':      currentId,
+        'img':     'test1.jpg',
+        'thumb':   'test-thumb1.png',
+        'source':  'http//:zziellos.com',
+        'user':    'kern',
+        'channel': '#winebottle',
+        'date':    '234253235'
       };
 
       result['images'].add(item);
