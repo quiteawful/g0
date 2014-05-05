@@ -3,8 +3,8 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -38,7 +38,8 @@ func NewDb(DbFile string) (*Db, error) {
 	_db.DbImageTable = "g0_images"
 	_db.conn, err = sql.Open("sqlite3", _db.DbFile)
 	if err != nil {
-		log.Fatalf("NewDb: Failed to open DbFile. Error: %s\n", err.Error())
+
+		fmt.Printf("NewDb: Failed to open DbFile. Error: %s\n", err.Error())
 		return nil, err
 	}
 	if _, err = os.Stat(_db.DbFile); os.IsNotExist(err) {
@@ -56,7 +57,7 @@ func NewDb(DbFile string) (*Db, error) {
 			")"
 		_, err = _db.Exec(sql)
 		if err != nil {
-			log.Fatalf("NewDb: Failed to execute query: %s Error:%s\n", sql, err.Error())
+			fmt.Printf("NewDb: Failed to execute query: %s Error:%s\n", sql, err.Error())
 			return nil, err
 		}
 	}
@@ -71,12 +72,12 @@ func (db *Db) Exec(query string) (sql.Result, error) {
 	var err error
 	if query == "" {
 		err = errors.New("Empty query")
-		log.Fatalf("Exec: Error:%s\n", err.Error())
+		fmt.Printf("Exec: Error:%s\n", err.Error())
 		return nil, err
 	}
 	result, err := db.conn.Exec(query)
 	if err != nil {
-		log.Fatalf("Exec: Failed to execute query: %s Error:%s\n", query, err.Error())
+		fmt.Printf("Exec: Failed to execute query: %s Error:%s\n", query, err.Error())
 		return nil, err
 	}
 	return result, nil
@@ -86,7 +87,7 @@ func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string
 	var err error
 	if name == "" {
 		err = errors.New("Empty filename")
-		log.Fatalf("NewImage: %s\n", err.Error())
+		fmt.Printf("NewImage: %s\n", err.Error())
 		return 0, err
 	}
 
@@ -101,7 +102,7 @@ func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string
 
 	result, err := db.Exec(query)
 	if err != nil {
-		log.Fatalf("NewImage: %s\n", err.Error())
+		fmt.Printf("NewImage: %s\n", err.Error())
 		return 0, err
 	}
 	id, _ := result.LastInsertId()
@@ -112,7 +113,7 @@ func (db *Db) GetImage(id int) (Image, error) {
 	var err error
 	if id < 1 {
 		err = errors.New("No id found.")
-		log.Fatalf("GetImage: %s\n", err.Error())
+		fmt.Printf("GetImage: %s\n", err.Error())
 		return Image{}, err
 	}
 
@@ -133,7 +134,7 @@ func (db *Db) GetImage(id int) (Image, error) {
 
 	if err == sql.ErrNoRows {
 		err = errors.New("Query returned zero rows.")
-		log.Fatalf("GetImage: %s %s\n", err.Error(), query)
+		fmt.Printf("GetImage: %s %s\n", err.Error(), query)
 		return Image{}, err
 	}
 
@@ -156,7 +157,7 @@ func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
 
 	rows, err := db.conn.Query(query)
 	if err != nil {
-		log.Fatalf("GetImages: %s\n", err)
+		fmt.Printf("GetImages: %s\n", err)
 		return nil, err
 	}
 
@@ -175,7 +176,7 @@ func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
 			&img.User)
 
 		if err != nil {
-			log.Fatalf("GetImages: %s\n", err)
+			fmt.Printf("GetImages: %s\n", err)
 			return nil, err
 		}
 
@@ -187,19 +188,19 @@ func (db *Db) GetImages(start, offset int) ([]Image, error) {
 	var err error
 	if start < 1 {
 		err = errors.New("Start id too low.")
-		log.Fatalf("GetImages: %s\n", err)
+		fmt.Printf("GetImages: %s\n", err)
 		return nil, err
 	}
 	if offset < 1 {
 		err = errors.New("Offset too low.")
-		log.Fatalf("GetImages: %s\n", err)
+		fmt.Printf("GetImages: %s\n", err)
 		return nil, err
 	}
 
 	query := "select * from " + db.DbImageTable + " where id >= ? and id < ?"
 	rows, err := db.conn.Query(query, start, (start + offset))
 	if err != nil {
-		log.Fatalf("GetImages: %s\n", err)
+		fmt.Printf("GetImages: %s\n", err)
 		return nil, err
 	}
 
@@ -218,7 +219,7 @@ func (db *Db) GetImages(start, offset int) ([]Image, error) {
 			&img.User)
 
 		if err != nil {
-			log.Fatalf("GetImages: %s\n", err)
+			fmt.Printf("GetImages: %s\n", err)
 			return nil, err
 		}
 
@@ -237,7 +238,7 @@ func (db *Db) DeleteImage(id int) bool {
 	result, err := db.conn.Exec(query, id)
 	affected, err := result.RowsAffected()
 	if err != nil {
-		log.Fatalf("DeleteImage: %s\n", err.Error())
+		fmt.Printf("DeleteImage: %s\n", err.Error())
 		return false
 	}
 	if affected != 1 {
@@ -253,7 +254,7 @@ func (db *Db) GetImageCount() (int, error) {
 	err := row.Scan(&c)
 	if err == sql.ErrNoRows {
 		err = errors.New("Query returned zero rows.")
-		log.Fatalf("GetImageCount: %s %s\n", err.Error(), query)
+		fmt.Printf("GetImageCount: %s %s\n", err.Error(), query)
 		return 0, err
 	}
 	return c, nil
