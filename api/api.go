@@ -19,6 +19,10 @@ type Image struct {
 	ID    string `json:"id"`
 	Img   string `json:"img"`
 	Thumb string `json:"thumb"`
+	Date  int64  `json:"date"`
+	Nick  string `json:"from-nick"`
+	Chan  string `json:"from-chan"`
+	Link  string `json:"from-link`
 }
 
 type Api struct {
@@ -65,12 +69,18 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 	for _, ele := range dbarray {
 		var tmpImage Image
 		tmpImage.ID = strconv.Itoa(ele.Id)
-		tmpImage.Img = ele.Url
+		tmpImage.Img = ele.Name
 		tmpImage.Thumb = ele.Thumbnail
+		tmpImage.Date = ele.Timestamp.Unix()
+		tmpImage.Nick = ele.User
+		tmpImage.Chan = ele.Channel
+		tmpImage.Link = ele.Url
 		imgreturn = append(imgreturn, tmpImage)
 	}
 	w.WriteJson(
 		&IDTest{
-			Images: imgreturn,
+			ImageSrc: "http://dum.my/images/",
+			ThumbSrc: "http://dum.my/thumbs/",
+			Images:   imgreturn,
 		})
 }
