@@ -89,7 +89,7 @@ func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string
 		return 0, err
 	}
 
-	sql := "insert into " + db.DbImageTable + "(hash, name, thumbnail, url, network, chan, user) values('" +
+	query := "insert into " + db.DbImageTable + "(hash, name, thumbnail, url, network, chan, user) values('" +
 		hash + "', '" +
 		name + "', '" +
 		thumbnail + "', '" +
@@ -98,7 +98,7 @@ func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string
 		channel + "', '" +
 		user + "');"
 
-	result, err := db.Exec(sql)
+	result, err := db.Exec(query)
 	if err != nil {
 		log.Fatalf("NewImage: %s\n", err.Error())
 		return 0, err
@@ -115,8 +115,8 @@ func (db *Db) GetImage(id int) (Image, error) {
 		return Image{}, err
 	}
 
-	_sql := "select * from " + db.DbImageTable + " where id = ?"
-	row := db.conn.QueryRow(_sql, id)
+	query := "select * from " + db.DbImageTable + " where id = ?"
+	row := db.conn.QueryRow(query, id)
 
 	result := Image{}
 	err = row.Scan(
@@ -132,7 +132,7 @@ func (db *Db) GetImage(id int) (Image, error) {
 
 	if err == sql.ErrNoRows {
 		err = errors.New("Query returned zero rows.")
-		log.Fatalf("GetImage: %s %s\n", err.Error(), _sql)
+		log.Fatalf("GetImage: %s %s\n", err.Error(), query)
 		return Image{}, err
 	}
 
@@ -152,8 +152,8 @@ func (db *Db) GetImages(start, offset int) ([]Image, error) {
 		return nil, err
 	}
 
-	sql := "select * from " + db.DbImageTable + " where id >= ? and id < ?"
-	rows, err := db.conn.Query(sql, start, (start + offset))
+	query := "select * from " + db.DbImageTable + " where id >= ? and id < ?"
+	rows, err := db.conn.Query(query, start, (start + offset))
 	if err != nil {
 		log.Fatalf("GetImages: %s\n", err)
 		return nil, err
@@ -189,8 +189,8 @@ func (db *Db) DeleteImage(id int) bool {
 		return false
 	}
 
-	sql := "delete from " + db.DbImageTable + " where id = ?"
-	result, err := db.conn.Exec(sql, id)
+	query := "delete from " + db.DbImageTable + " where id = ?"
+	result, err := db.conn.Exec(query, id)
 	affected, err := result.RowsAffected()
 	if err != nil {
 		log.Fatalf("DeleteImage: %s\n", err.Error())
@@ -203,5 +203,7 @@ func (db *Db) DeleteImage(id int) bool {
 }
 
 func (db *Db) GetImageCount() (int, error) {
-	return 78, nil
+	query := "select count(*) from " + db.DbImageTable
+	row := db.conn.QueryRow(query)
+err:
 }
