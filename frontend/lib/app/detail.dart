@@ -4,10 +4,12 @@ class Detail{
 
   Element _element;
   Element _cover;
+  Element _spinner;
 
   Detail(){
     _element = querySelector('#container .detail');
     _cover = querySelector('#container .cover');
+    _spinner = _element.querySelector('.spinner');
 
     if(_cover != null){
       _cover.onClick.listen((_) => _hideDetail());
@@ -30,9 +32,17 @@ class Detail{
     assert(imageUrl != null);
 
     _showCover();
+    _showDetail();
+  }
+
+  void _showDetail(){
+    _spinner.classes.add('show');
+    _element.classes.add('show');
   }
 
   void _hideDetail(){
+    _spinner.classes.remove('show');
+    _element.classes.remove('show');
     _hideCover();
   }
 
