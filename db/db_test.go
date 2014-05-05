@@ -54,7 +54,7 @@ func TestGetImage(t *testing.T) {
 }
 
 func TestGetImages(t *testing.T) {
-	defer os.Remove(dbfile)
+	//defer os.Remove(dbfile)
 	testDb, err := NewDb(dbfile)
 	if err != nil {
 		t.Fatal(err)
@@ -100,25 +100,9 @@ func TestDeleteImage(t *testing.T) {
 	if !testDb.DeleteImage(1) {
 		t.Fatal("Failed to delete image.")
 	}
-}
 
-func TestGetImageCount(t *testing.T) {
-	defer os.Remove(dbfile)
-	testDb, err := NewDb(dbfile)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = testDb.NewImage("hash", "datei.jpg", "thumb.jpg", "http://example.tld", "nerdlife", "#rumkugel", "Churchill")
-	if err != nil {
-		t.Fatal("Failed to insert image.")
-	}
-
-	c, err := testDb.GetImageCount()
-	if err != nil {
-		t.Fatal("Failed to count images in db.")
-	}
-	if c != 1 {
-		t.Fatalf("Failed to count images correctly, got %d expected 1\n", c)
+	_, err = testDb.GetImage(1)
+	if err == nil {
+		t.Fatalf("Failed to select image. %s", err.Error())
 	}
 }
