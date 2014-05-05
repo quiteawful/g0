@@ -6,6 +6,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -140,12 +141,20 @@ func (db *Db) GetImage(id int) (Image, error) {
 }
 
 func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
-	query := "select * from " + db.DbImageTable + " where id <= ? and id > ? order by tstamp desc"
-	idend := id - n
-	if idend < 1 { //
-		idend = 1
+	var query string
+
+	if id > 0 {
+		idend := id - n
+		if idend < 1 { // do not accept negative values in where clause
+			idend = 1
+		}
+		query = "select * from " + db.DbImageTable + " where id <= " + strconv.Itoa(id) + " and id > " + strconv.Itoa(idend) + " order by tstamp desc"
+
+	} else {
+		query = "select * from " + db.DbImageTable + " order by id desc limit 0, " + strconv.Itoa(n)
 	}
-	rows, err := db.conn.Query(query, id, idend)
+
+	rows, err := db.conn.Query(query)
 	if err != nil {
 		log.Fatalf("GetImages: %s\n", err)
 		return nil, err
