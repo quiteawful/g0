@@ -58,10 +58,12 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 	imgid, err := strconv.Atoi(r.PathParam("imgid"))
 	if err != nil {
 		rest.Error(w, "NYAN not found", 405)
+		return
 	}
 	count, err := strconv.Atoi(r.PathParam("count"))
 	if err != nil {
 		rest.Error(w, "NYAN not found", 405)
+		return
 	}
 	dbase, _ := db.NewDb("g0.db")
 	dbarray, err := dbase.GetLatestImages(imgid, count)
