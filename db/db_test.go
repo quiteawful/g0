@@ -10,7 +10,7 @@ var (
 )
 
 func TestNewDb(t *testing.T) {
-	defer os.Remove(dbfile)
+	os.Remove(dbfile)
 	testDb, err := NewDb(dbfile)
 	if err != nil {
 		t.Fatal(err)
@@ -23,7 +23,7 @@ func TestNewDb(t *testing.T) {
 }
 
 func TestNewImage(t *testing.T) {
-	defer os.Remove(dbfile)
+	os.Remove(dbfile)
 	testDb, err := NewDb(dbfile)
 	if err != nil {
 		t.Fatal(err)
@@ -36,7 +36,7 @@ func TestNewImage(t *testing.T) {
 }
 
 func TestGetImage(t *testing.T) {
-	defer os.Remove(dbfile)
+	os.Remove(dbfile)
 	testDb, err := NewDb(dbfile)
 	if err != nil {
 		t.Fatal(err)
@@ -54,7 +54,7 @@ func TestGetImage(t *testing.T) {
 }
 
 func TestGetImages(t *testing.T) {
-	defer os.Remove(dbfile)
+	os.Remove(dbfile)
 	testDb, err := NewDb(dbfile)
 	if err != nil {
 		t.Fatal(err)
@@ -86,7 +86,7 @@ func TestGetImages(t *testing.T) {
 }
 
 func TestDeleteImage(t *testing.T) {
-	defer os.Remove(dbfile)
+	os.Remove(dbfile)
 	testDb, err := NewDb(dbfile)
 	if err != nil {
 		t.Fatal(err)
@@ -103,7 +103,7 @@ func TestDeleteImage(t *testing.T) {
 }
 
 func TestGetImageCount(t *testing.T) {
-	defer os.Remove(dbfile)
+	os.Remove(dbfile)
 	testDb, err := NewDb(dbfile)
 	if err != nil {
 		t.Fatal(err)
