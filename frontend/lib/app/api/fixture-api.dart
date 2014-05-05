@@ -36,7 +36,7 @@ class FixtureApi implements Api {
 
     Completer compl = new Completer();
     Future f = new Future.delayed(
-        new Duration(seconds: 1),
+        new Duration(milliseconds: 300),
         () => compl.complete(result)
     );
     return compl.future;
