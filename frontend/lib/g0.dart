@@ -9,6 +9,7 @@ part 'app/api/fixture-api.dart';
 part 'app/api/live-api.dart';
 part 'app/image-list.dart';
 part 'app/infinite-load.dart';
+part 'app/detail.dart';
 
 class G0 {
 

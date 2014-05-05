@@ -12,6 +12,8 @@ class ImageList {
   int _pageWidth;
   int _pageHeight;
 
+  Detail detail = new Detail();
+
   String host = window.location.hostname;
 
   /**
@@ -55,6 +57,10 @@ class ImageList {
       _imageList.append(item);
       items.add(item);
       lastId = data['id'].toString();
+
+      //Click event for detail view
+      item.onClick.listen(onImageClick);
+
       Future delayed = new Future.delayed(
           new Duration(milliseconds: delay),
           () => item.classes.add('loaded')
@@ -86,10 +92,16 @@ class ImageList {
    */
   Element createItem(Map data){
     LIElement li = new LIElement();
-    AnchorElement a = new AnchorElement(href: '${_imageSrc}${data['image']}');
+    AnchorElement a = new AnchorElement(href: '${_imageSrc}${data['img']}');
     ImageElement img = new ImageElement(src: '${_imageSrc}${data['thumb']}');
     li.classes.add('image-list-item');
-    li.dataset['data-id'] = data['id'].toString();
+    li.dataset['id'] = data['id'].toString();
+    li.dataset['user'] = data['user'].toString();
+    li.dataset['channel'] = data['channel'].toString();
+    li.dataset['date'] = data['date'].toString();
+    li.dataset['source'] = data['source'].toString();
+    li.dataset['image'] = '${_imageSrc}${data['img'].toString()}';
+
     a.append(img);
     li.append(a);
     return li;
@@ -111,5 +123,14 @@ class ImageList {
       print('change to $newPerPage images per page');
       perPage = newPerPage;
     }
+  }
+
+  void onImageClick(Event evt){
+    evt.preventDefault();
+    Element target = evt.target;
+    if(target is !LIElement){
+      target = target.parentNode;
+    }
+    detail.show(target);
   }
 }
