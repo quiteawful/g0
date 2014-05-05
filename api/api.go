@@ -42,7 +42,7 @@ func (a *Api) Run() (err error) {
 		XPoweredBy:               "soda-api",
 	}
 	handler.SetRoutes(
-		&rest.Route{"GET", "/api/:offset/:count", GetIDstuff},
+		&rest.Route{"GET", "/api/:imgid/:count", GetIDstuff},
 		&rest.Route{"GET", "/.status",
 			func(w rest.ResponseWriter, r *rest.Request) {
 				w.WriteJson(handler.GetStatus())
@@ -55,14 +55,16 @@ func (a *Api) Run() (err error) {
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 	var imgreturn []Image
 
-	offset, _ := strconv.Atoi(r.PathParam("offset"))
-	count, _ := strconv.Atoi(r.PathParam("count"))
-	if offset == 42 {
-		rest.NotFound(w, r)
-		return
+	imgid, err := strconv.Atoi(r.PathParam("imgid"))
+	if err != nil {
+		rest.Error(w, "NYAN not found", 405)
+	}
+	count, err := strconv.Atoi(r.PathParam("count"))
+	if err != nil {
+		rest.Error(w, "NYAN not found", 405)
 	}
 	dbase, _ := db.NewDb("g0.db")
-	dbarray, err := dbase.GetImages(offset, count)
+	dbarray, err := dbase.GetLatestImages(imgid, count)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
