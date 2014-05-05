@@ -79,6 +79,7 @@ func TestGetImages(t *testing.T) {
 }
 
 func TestDeleteImage(t *testing.T) {
+	os.Remove("deleteImage.db")
 	testDb, err := NewDb("deleteImage.db")
 	if err != nil {
 		t.Fatal(err)
@@ -95,6 +96,7 @@ func TestDeleteImage(t *testing.T) {
 }
 
 func TestGetImageCount(t *testing.T) {
+	os.Remove("getImageCount.db")
 	testDb, err := NewDb("getImageCount.db")
 	if err != nil {
 		t.Fatal(err)
