@@ -5,15 +5,27 @@ class Detail{
   Element _element;
   Element _cover;
   Element _spinner;
+  Element _imageContainer;
+
+  int _windowWidth;
 
   Detail(){
     _element = querySelector('#container .detail');
     _cover = querySelector('#container .cover');
     _spinner = _element.querySelector('.spinner');
+    _imageContainer = _element.querySelector('.image-container');
+    _setWindowSize();
 
     if(_cover != null){
       _cover.onClick.listen((_) => _hideDetail());
     }
+
+    window.onResize.listen((_) => _setWindowSize());
+
+  }
+
+  void _setWindowSize(){
+    _windowWidth = window.innerWidth;
   }
 
   void show(Element target){
@@ -30,6 +42,10 @@ class Detail{
 
     assert(id != null);
     assert(imageUrl != null);
+
+    ImageElement img = new ImageElement(src: imageUrl);
+    img.classes.add('detail-image');
+    img.onLoad.listen((Event evt) => _showImage(evt.target));
 
     _showCover();
     _showDetail();
@@ -52,5 +68,13 @@ class Detail{
 
   void _hideCover(){
     _cover.classes.remove('show');
+  }
+
+  void _showImage(ImageElement img){
+    _spinner.classes.remove('show');
+
+    _imageContainer..innerHtml = ''
+                   ..append(img);
+
   }
 }
