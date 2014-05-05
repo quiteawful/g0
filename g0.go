@@ -36,6 +36,7 @@ func main() {
 		f, err := util.DownloadImage(link.URL)
 		if err != nil {
 			fmt.Println(err.Error())
+			continue
 		}
 
 		imgbytes, _ := img.GetImageFromFile(f)
