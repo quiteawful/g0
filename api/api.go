@@ -20,9 +20,9 @@ type Image struct {
 	Img   string `json:"img"`
 	Thumb string `json:"thumb"`
 	Date  int64  `json:"date"`
-	Nick  string `json:"from-nick"`
-	Chan  string `json:"from-chan"`
-	Link  string `json:"from-link`
+	Nick  string `json:"user"`
+	Chan  string `json:"channel"`
+	Link  string `json:"source`
 }
 
 type Api struct {
