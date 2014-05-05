@@ -205,5 +205,12 @@ func (db *Db) DeleteImage(id int) bool {
 func (db *Db) GetImageCount() (int, error) {
 	query := "select count(*) from " + db.DbImageTable
 	row := db.conn.QueryRow(query)
-err:
+	var c int
+	err := row.Scan(&c)
+	if err == sql.ErrNoRows {
+		err = errors.New("Query returned zero rows.")
+		log.Fatalf("GetImageCount: %s %s\n", err.Error(), query)
+		return 0, err
+	}
+	return c, nil
 }
