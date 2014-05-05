@@ -139,6 +139,41 @@ func (db *Db) GetImage(id int) (Image, error) {
 	return result, nil
 }
 
+func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
+	query := "select * from " + db.DbImageTable + " where id <= ? and id > ? order by tstamp desc"
+	idend := id - n
+	if idend < 1 { //
+		idend = 1
+	}
+	rows, err := db.conn.Query(query, id, idend)
+	if err != nil {
+		log.Fatalf("GetImages: %s\n", err)
+		return nil, err
+	}
+
+	var result []Image
+	for rows.Next() {
+		img := Image{}
+		err = rows.Scan(
+			&img.Id,
+			&img.Hash,
+			&img.Name,
+			&img.Thumbnail,
+			&img.Timestamp,
+			&img.Url,
+			&img.Network,
+			&img.Channel,
+			&img.User)
+
+		if err != nil {
+			log.Fatalf("GetImages: %s\n", err)
+			return nil, err
+		}
+
+		result = append(result, img)
+	}
+	return result, nil
+}
 func (db *Db) GetImages(start, offset int) ([]Image, error) {
 	var err error
 	if start < 1 {

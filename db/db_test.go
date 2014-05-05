@@ -5,13 +5,9 @@ import (
 	"testing"
 )
 
-var (
-	dbfile string = "test.db"
-)
-
 func TestNewDb(t *testing.T) {
-	os.Remove(dbfile)
-	testDb, err := NewDb(dbfile)
+
+	testDb, err := NewDb("newDb.db")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,8 +19,7 @@ func TestNewDb(t *testing.T) {
 }
 
 func TestNewImage(t *testing.T) {
-	os.Remove(dbfile)
-	testDb, err := NewDb(dbfile)
+	testDb, err := NewDb("newImage.db")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,8 +31,7 @@ func TestNewImage(t *testing.T) {
 }
 
 func TestGetImage(t *testing.T) {
-	os.Remove(dbfile)
-	testDb, err := NewDb(dbfile)
+	testDb, err := NewDb("getImage.db")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,8 +48,7 @@ func TestGetImage(t *testing.T) {
 }
 
 func TestGetImages(t *testing.T) {
-	os.Remove(dbfile)
-	testDb, err := NewDb(dbfile)
+	testDb, err := NewDb("newImages.db")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,8 +79,7 @@ func TestGetImages(t *testing.T) {
 }
 
 func TestDeleteImage(t *testing.T) {
-	os.Remove(dbfile)
-	testDb, err := NewDb(dbfile)
+	testDb, err := NewDb("deleteImage.db")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,8 +95,7 @@ func TestDeleteImage(t *testing.T) {
 }
 
 func TestGetImageCount(t *testing.T) {
-	os.Remove(dbfile)
-	testDb, err := NewDb(dbfile)
+	testDb, err := NewDb("getImageCount.db")
 	if err != nil {
 		t.Fatal(err)
 	}
