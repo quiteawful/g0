@@ -9,7 +9,7 @@ module.exports = function(grunt) {
           cacheLocation: 'cache/sass-cache'
         },
         files: {
-          'web/assets/css/g0.css': 'assets/scss/g0.scss',
+          'web/res/css/g0.css': 'res/scss/g0.scss',
         }
       },
       build: {
@@ -18,12 +18,12 @@ module.exports = function(grunt) {
           cacheLocation: 'cache/sass-cache'
         },
         files: {
-          'web/assets/css/g0.css': 'assets/scss/g0.scss',
+          'web/res/css/g0.css': 'res/scss/g0.scss',
         }
       }
     },
     watch: {
-      files: ['assets/scss/**/*'],
+      files: ['res/scss/**/*'],
       tasks: ['sass']
     }
   });

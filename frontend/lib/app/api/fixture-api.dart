@@ -10,8 +10,8 @@ class FixtureApi implements Api {
 
   FixtureApi(){
     result = {
-      'image-src' : 'assets/images/',
-      'thumb-src' : 'assets/images/',
+      'image-src' : 'res/images/',
+      'thumb-src' : 'res/images/',
       'images': []
     };
   }
