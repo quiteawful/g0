@@ -53,6 +53,7 @@ class Detail{
   void _eventBindings(){
     _cover.onClick.listen((_) => _hideDetail());
     window.onResize.listen((_) => _onResize());
+    window.onKeyUp.listen(_handleKeys);
   }
 
   /**
@@ -165,8 +166,16 @@ class Detail{
     int left = width >= _windowWidth ? 0 : ((_windowWidth - width) / 2).ceil();
 
     _element..style.width = '${width}px'
-                   ..style.height = '${height}px'
-                   ..style.left = '${left}px'
-                   ..style.top = '120px';
+            ..style.height = '${height}px'
+            ..style.left = '${left}px'
+            ..style.top = '120px';
+  }
+
+  void _handleKeys(KeyboardEvent evt){
+    switch(evt.keyCode){
+      case 27:
+        _hideDetail();
+        break;
+    }
   }
 }
