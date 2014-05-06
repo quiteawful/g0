@@ -14,18 +14,19 @@ class Detail{
   Element _source;
 
   int _windowWidth;
+  ImageElement loadedImage;
 
   DateFormat dateFormat = new DateFormat(G0.DATE_FORMAT);
 
   Detail(){
     _getElements();
-    _setWindowSize();
+    _onResize();
 
     if(_cover != null){
       _cover.onClick.listen((_) => _hideDetail());
     }
 
-    window.onResize.listen((_) => _setWindowSize());
+    window.onResize.listen((_) => _onResize());
   }
 
   void _getElements(){
@@ -40,8 +41,9 @@ class Detail{
     _imageContainer = _element.querySelector('.image-container');
   }
 
-  void _setWindowSize(){
+  void _onResize(){
     _windowWidth = window.innerWidth;
+    _setImageSize();
   }
 
   void show(Element target){
@@ -59,9 +61,9 @@ class Detail{
     assert(id != null);
     assert(imageUrl != null);
 
-    ImageElement img = new ImageElement(src: imageUrl);
-    img.classes.add('detail-image');
-    img.onLoad.listen((Event evt) => _showImage(evt.target));
+    loadedImage = new ImageElement(src: imageUrl);
+    loadedImage.classes.add('detail-image');
+    loadedImage.onLoad.listen((Event evt) => _showImage(evt.target));
 
     DateTime imgDate = new DateTime.fromMillisecondsSinceEpoch(date);
 
@@ -111,10 +113,31 @@ class Detail{
   }
 
   void _showImage(ImageElement img){
-    _spinner.classes.remove('show');
+    img.dataset['width'] = img.width.toString();
+    img.dataset['height'] = img.height.toString();
 
+    _setImageSize();
     _imageContainer..innerHtml = ''
-                   ..append(img);
+                   ..append(loadedImage);
 
+    _spinner.classes.remove('show');
+  }
+
+  void _setImageSize(){
+    if(loadedImage == null){
+      return;
+    }
+    int origWidth = int.parse(loadedImage.dataset['width']);
+    int origHeight = int.parse(loadedImage.dataset['height']);
+
+    int width = origWidth > _windowWidth ? _windowWidth : origWidth;
+    double ratio = width / origWidth;
+    int height = (origHeight * ratio).ceil();
+    int left = width >= _windowWidth ? 0 : ((_windowWidth - width) / 2).ceil();
+
+    _element..style.width = '${width}px'
+                   ..style.height = '${height}px'
+                   ..style.left = '${left}px'
+                   ..style.top = '120px';
   }
 }

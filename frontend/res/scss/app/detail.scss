@@ -7,8 +7,8 @@
   top: 50%;
   left: 50%;
   display: none;
-  margin: -50px 0 0 -50px;
-  background: $background-color;
+  margin: 0;
+  padding: 20px;
 
   &.show {
     display: block;
@@ -27,7 +27,6 @@
 
   .center {
     margin: 0 auto;
-    background: red;
     img {
       width: 100%;
       height: auto;
