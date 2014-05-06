@@ -19,7 +19,7 @@ class ImageList {
   /**
    * id of last loaded image
    */
-  String lastId = '';
+  String currentOffset = '';
 
   /**
    * Number of images which fit in one screen
@@ -56,7 +56,7 @@ class ImageList {
       Element item = createItem(data);
       _imageList.append(item);
       items.add(item);
-      lastId = data['id'].toString();
+      currentOffset = data['id'].toString();
 
       //Click event for detail view
       item.onClick.listen(onImageClick);
