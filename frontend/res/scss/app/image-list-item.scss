@@ -5,10 +5,12 @@
   height: $list-item-width;
   position: relative;
   opacity: 0;
-  @include transition(opacity, .5s, ease);
+  @include transition(all, .5s, ease);
+  @include transform(translateY(-30px));
 
   &.loaded {
     opacity: 1;
+    @include transform(translateY(0));
   }
 
   img {

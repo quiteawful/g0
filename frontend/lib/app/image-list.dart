@@ -65,7 +65,7 @@ class ImageList {
           new Duration(milliseconds: delay),
           () => item.classes.add('loaded')
       );
-      delay += 50;
+      delay += 30;
     });
   }
 
