@@ -129,6 +129,12 @@ class Detail{
     _element.classes.remove('show');
     _footer.classes.remove('show');
     _hideCover();
+
+    window.history.pushState(
+        null,
+        imageUrl,
+        window.location.pathname
+    );
   }
 
   void _showCover(){
