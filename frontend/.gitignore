@@ -1,6 +1,6 @@
 node_modules
-/web/assets/images/**.*
-/web/assets/css/**.*
+/web/res/images/**.*
+/web/res/css/**.*
 /cache
 
 packages
