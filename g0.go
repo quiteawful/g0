@@ -1,16 +1,13 @@
 package main
 
 import (
-	//"errors"
-	"encoding/json"
 	"fmt"
 	"g0/api"
+	"g0/conf"
 	"g0/db"
 	"g0/ircbot"
 	"g0/util"
 	"g0/util/img"
-	"os"
-	//"time"
 )
 
 type JSONconf struct {
@@ -21,18 +18,15 @@ type JSONconf struct {
 	Bot       *IrcBot.Bot
 }
 
-var Conf = new(JSONconf)
-
 func main() {
-	//Conf := new(JSONconf)
-	Init(Conf)
-	Conf.Bot.LinkChannel = make(chan IrcBot.Link)
+	Init("init")
+	conf.Conf.Bot.LinkChannel = make(chan IrcBot.Link)
 
-	dbase, _ := db.NewDb(Conf.DBpath)
+	dbase, _ := db.NewDb(conf.Conf.DBpath)
 
 	//hässliche blocking schleife ist hässlich
 	for true {
-		link := <-Conf.Bot.LinkChannel
+		link := <-conf.Conf.Bot.LinkChannel
 		f, hash, err := util.DownloadImage(link.URL)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -47,13 +41,7 @@ func main() {
 	}
 }
 
-func Init(Conf *JSONconf) {
-	file, _ := os.Open("config.json")
-	decoder := json.NewDecoder(file)
-	err := decoder.Decode(Conf)
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	go Conf.Rest.Run()
-	go Conf.Bot.Run()
+func Init(placeholder string) {
+	go conf.Conf.Rest.Run()
+	go conf.Conf.Bot.Run()
 }
