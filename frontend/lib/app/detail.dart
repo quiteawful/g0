@@ -71,6 +71,12 @@ class Detail{
     _source.innerHtml = source;
     _source.setAttribute('href', source);
 
+    window.history.pushState(
+        null,
+        'imageUrl',
+        window.location.pathname + '?offset=$id'
+    );
+
     _showCover();
     _showDetail();
   }
