@@ -81,6 +81,13 @@ class Detail{
     _showDetail();
   }
 
+  void showByOffset(String offset){
+    LIElement target = querySelector('.image-list li[data-id="$offset"]');
+    if(target != null){
+      show(target);
+    }
+  }
+
   void _showDetail(){
     _spinner.classes.add('show');
     _element.classes.add('show');

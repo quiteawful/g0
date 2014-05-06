@@ -35,11 +35,17 @@ class G0 {
     imageList = new ImageList(imageListElement, 150, 150);
     centeredFloatList = new CenteredFloatList(imageListElement);
     infiniteLoad = new InfinteLoad(imageListElement);
-    _loadImages(offset, imageList.perPage);
+    _loadImages(offset, imageList.perPage).then((_){
+      if(offset != null){
+        imageList.detail.showByOffset(offset);
+      }
+    });
+
 
     infiniteLoad.onFire.listen((_){
       _loadImages(imageList.lastId, imageList.perPage);
     });
+
   }
 
   /**
@@ -47,7 +53,8 @@ class G0 {
    * Displays images after [api] call is finished.
    * Initializes [centeredFloatList] on first call.
    */
-  void _loadImages(String offset, int count){
+  Future _loadImages(String offset, int count){
+    Completer completer = new Completer();
     imageList.showLoading();
     Future<Map> future = api.getImages(offset: offset, count: count);
     future.then((result) => imageList.showImages(result))
@@ -58,7 +65,9 @@ class G0 {
              imageList.hideLoading();
              infiniteLoad.updateTargetHeight();
              infiniteLoad.activate();
+             completer.complete();
           }
     );
+    return completer.future;
   }
 }
