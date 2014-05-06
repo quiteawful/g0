@@ -7,13 +7,18 @@ class Detail{
   Element _spinner;
   Element _imageContainer;
 
+  Element _footer;
+  Element _user;
+  Element _channel;
+  Element _date;
+  Element _source;
+
   int _windowWidth;
 
+  DateFormat dateFormat = new DateFormat(G0.DATE_FORMAT);
+
   Detail(){
-    _element = querySelector('#container .detail');
-    _cover = querySelector('#container .cover');
-    _spinner = _element.querySelector('.spinner');
-    _imageContainer = _element.querySelector('.image-container');
+    _getElements();
     _setWindowSize();
 
     if(_cover != null){
@@ -21,7 +26,18 @@ class Detail{
     }
 
     window.onResize.listen((_) => _setWindowSize());
+  }
 
+  void _getElements(){
+    _element = querySelector('#container .detail');
+    _cover = querySelector('#container .cover');
+    _spinner = _element.querySelector('.spinner');
+    _footer = _element.querySelector('.footer');
+    _user = _footer.querySelector('.user');
+    _channel = _footer.querySelector('.channel');
+    _date = _footer.querySelector('.date');
+    _source = _footer.querySelector('.source');
+    _imageContainer = _element.querySelector('.image-container');
   }
 
   void _setWindowSize(){
@@ -38,7 +54,7 @@ class Detail{
     String source = target.dataset['source'];
     String user = target.dataset['user'];
     String channel = target.dataset['channel'];
-    String date = target.dataset['date'];
+    int date = int.parse(target.dataset['date']) * 1000 ;
 
     assert(id != null);
     assert(imageUrl != null);
@@ -47,6 +63,14 @@ class Detail{
     img.classes.add('detail-image');
     img.onLoad.listen((Event evt) => _showImage(evt.target));
 
+    DateTime imgDate = new DateTime.fromMillisecondsSinceEpoch(date);
+
+    _user.innerHtml = user;
+    _channel.innerHtml = channel;
+    _date.innerHtml = '${dateFormat.format(imgDate)}';
+    _source.innerHtml = source;
+    _source.setAttribute('href', source);
+
     _showCover();
     _showDetail();
   }
@@ -54,11 +78,14 @@ class Detail{
   void _showDetail(){
     _spinner.classes.add('show');
     _element.classes.add('show');
+    _footer.classes.add('show');
+
   }
 
   void _hideDetail(){
     _spinner.classes.remove('show');
     _element.classes.remove('show');
+    _footer.classes.remove('show');
     _hideCover();
   }
 

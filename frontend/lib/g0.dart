@@ -2,6 +2,7 @@ library G0;
 
 import 'dart:html';
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 part 'app/centered-float-list.dart';
 part 'app/api.dart';
@@ -12,6 +13,8 @@ part 'app/infinite-load.dart';
 part 'app/detail.dart';
 
 class G0 {
+
+  static const String DATE_FORMAT = 'dd.MM.yyyyy, HH:mm';
 
   Element container;
 

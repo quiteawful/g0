@@ -28,7 +28,7 @@ class FixtureApi implements Api {
         'source':  'http//:zziellos.com',
         'user':    'kern',
         'channel': '#winebottle',
-        'date':    '234253235'
+        'date':    '1399392098'
       };
 
       result['images'].add(item);

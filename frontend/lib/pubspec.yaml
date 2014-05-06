@@ -2,5 +2,4 @@ name: g0
 description: A sample web application
 dependencies:
   browser: any
-  query_string: any
   intl: any
