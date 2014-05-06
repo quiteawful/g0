@@ -2,6 +2,7 @@
 package util
 
 import (
+	"crypto/md5"
 	"crypto/rand"
 	"fmt"
 	"io"
@@ -16,10 +17,10 @@ const MAX_SIZE = 10485760
 var StdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 var imageregex = regexp.MustCompile(`image\/(.+)`)
 
-func DownloadImage(link string) (filename string, errret error) {
+func DownloadImage(link string) (filename, hash string, errret error) {
 	_, err := url.Parse(link) // ./util.go:20: u declared and not used
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	var bufa [64]byte
 	var b []byte
@@ -28,11 +29,11 @@ func DownloadImage(link string) (filename string, errret error) {
 	buf := bufa[:]
 	res, err := http.Get(link)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer res.Body.Close()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	for {
 		n, err := res.Body.Read(buf)
@@ -40,21 +41,24 @@ func DownloadImage(link string) (filename string, errret error) {
 			mime := http.DetectContentType(buf)
 			urlType = imageregex.FindStringSubmatch(mime)
 			if urlType == nil {
-				return "", fmt.Errorf("not an image: %q", mime)
+				return "", "", fmt.Errorf("not an image: %q", mime)
 			}
 		}
 		size += n
 		if size > MAX_SIZE {
-			return "", fmt.Errorf("image too large")
+			return "", "", fmt.Errorf("image too large")
 		}
 		b = append(b, buf[:n]...)
 		if err == io.EOF {
+			h := md5.New()
+			h.Write(b)
 			filename = newLenChars(6, StdChars) + "." + urlType[1]
 			ioutil.WriteFile(filename, b, 0644)
-			return filename, nil
+
+			return filename, fmt.Sprintf("%x", h.Sum(nil)), nil
 		}
 	}
-	return filename, nil
+	return filename, "", nil
 }
 
 // NewLenChars stolen from https://github.com/dchest/uniuri , thx

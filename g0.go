@@ -33,7 +33,7 @@ func main() {
 	//hässliche blocking schleife ist hässlich
 	for true {
 		link := <-Conf.Bot.LinkChannel
-		f, err := util.DownloadImage(link.URL)
+		f, hash, err := util.DownloadImage(link.URL)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
@@ -43,7 +43,7 @@ func main() {
 		thmb, _ := img.MakeThumbnail(imgbytes, 150, 150)
 		img.SaveImageAsJPG("thumb-"+f, thmb)
 
-		dbase.NewImage("hash", f, "thumb"+f, link.URL, link.Network, link.Channel, link.Poster)
+		dbase.NewImage(hash, f, "thumb"+f, link.URL, link.Network, link.Channel, link.Poster)
 	}
 }
 
