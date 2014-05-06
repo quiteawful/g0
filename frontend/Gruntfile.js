@@ -22,6 +22,18 @@ module.exports = function(grunt) {
         }
       }
     },
+    'sftp-deploy': {
+      build: {
+        auth: {
+          host: '188.226.132.29',
+          port: 22,
+          authKey: 'key1'
+        },
+        src: 'build',
+        dest: '/var/www/slemgrim.com/public/g0',
+        server_sep: '/'
+      }
+    },
     watch: {
       files: ['res/scss/**/*'],
       tasks: ['sass']
@@ -30,7 +42,9 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-sftp-deploy');
 
   grunt.registerTask('default', ['sass:dist']);
   grunt.registerTask('build', ['sass:build']);
+  grunt.registerTask('deploy', ['sass:build', 'sftp-deploy']);
 };
