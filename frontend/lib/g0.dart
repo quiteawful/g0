@@ -43,7 +43,7 @@ class G0 {
 
 
     infiniteLoad.onFire.listen((_){
-      _loadImages(imageList.lastId, imageList.perPage);
+      _loadImages(imageList.currentOffset, imageList.perPage);
     });
 
   }
