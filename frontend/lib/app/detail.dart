@@ -128,6 +128,7 @@ class Detail{
     _spinner.classes.remove('show');
     _element.classes.remove('show');
     _footer.classes.remove('show');
+    _imageContainer.innerHtml = '';
     _hideCover();
 
     window.history.pushState(
@@ -150,9 +151,7 @@ class Detail{
     img.dataset['height'] = img.height.toString();
 
     _setImageSize();
-    _imageContainer..innerHtml = ''
-                   ..append(_loadedImage);
-
+    _imageContainer.append(_loadedImage);
     _spinner.classes.remove('show');
   }
 
