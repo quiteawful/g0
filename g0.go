@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"g0/api"
-	"g0/conf"
-	"g0/db"
-	"g0/ircbot"
-	"g0/util"
-	"g0/util/img"
+	"github.com/aimless/g0/api"
+	"github.com/aimless/g0/conf"
+	"github.com/aimless/g0/db"
+	"github.com/aimless/g0/ircbot"
+	"github.com/aimless/g0/util"
+	"github.com/aimless/g0/util/img"
 )
 
 type JSONconf struct {
