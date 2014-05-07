@@ -4,7 +4,7 @@ package Api
 import (
 	"errors"
 	"fmt"
-	"g0/db"
+	"github.com/aimless/g0/db"
 	"github.com/ant0ine/go-json-rest/rest"
 	"net/http"
 	"strconv"

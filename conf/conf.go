@@ -4,8 +4,8 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
-	"g0/api"
-	"g0/ircbot"
+	"github.com/aimless/g0/api"
+	"github.com/aimless/g0/ircbot"
 	"os"
 )
 
