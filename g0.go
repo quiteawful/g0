@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/aimless/g0/conf"
 	"github.com/aimless/g0/db"
 	"github.com/aimless/g0/ircbot"
 	"github.com/aimless/g0/util"
 	"github.com/aimless/g0/util/img"
+	"log"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 		link := <-conf.Bot.LinkChannel
 		f, hash, err := util.DownloadImage(link.URL)
 		if err != nil {
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 			continue
 		}
 

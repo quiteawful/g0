@@ -3,8 +3,8 @@ package IrcBot
 import (
 	"crypto/tls"
 	//"errors"
-	"fmt"
 	"github.com/thoj/go-ircevent"
+	"log"
 	"regexp"
 )
 
@@ -39,11 +39,11 @@ func (b *Bot) Run() {
 
 	ircErr := ircCon.Connect(b.Connections[0].Address)
 	if ircErr != nil {
-		fmt.Println(ircErr.Error())
+		log.Println(ircErr.Error())
 	}
 	ircCon.AddCallback("001", func(e *irc.Event) {
 		for _, i := range b.Connections[0].Channels {
-			fmt.Println("Joining: " + i)
+			log.Println("Joining: " + i)
 			ircCon.Join(i)
 		}
 
@@ -58,7 +58,7 @@ func (b *Bot) Run() {
 
 	b.Connections = append(b.Connections, Conn{ircCon, b.Connections[0].Address, b.Connections[0].Channels})
 	ircCon.Loop()
-	fmt.Printf("IRC loop exited")
+	log.Printf("IRC loop exited")
 }
 
 func parseIrc(e *irc.Event, ircCon *irc.Connection) {

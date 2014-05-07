@@ -3,7 +3,6 @@ package conf
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/aimless/g0/api"
 	"github.com/aimless/g0/ircbot"
 	"log"
@@ -33,7 +32,7 @@ func init() {
 	decoder := json.NewDecoder(file)
 	err := decoder.Decode(c)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		os.Exit(1)
 	}
 
