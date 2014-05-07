@@ -3,9 +3,9 @@ package conf
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/aimless/g0/api"
 	"github.com/aimless/g0/ircbot"
+	"log"
 	"os"
 )
 
@@ -17,15 +17,30 @@ type JSONconf struct {
 	Bot       *IrcBot.Bot
 }
 
-var Conf = new(JSONconf)
+var (
+	Imagepath = ""
+	Thumbpath = ""
+	DBpath    = ""
+	Rest      = new(Api.Api)
+	Bot       = new(IrcBot.Bot)
+)
+
+var c = new(JSONconf)
 
 func init() {
-
 	file, _ := os.Open("config.json")
 	decoder := json.NewDecoder(file)
-	err := decoder.Decode(Conf)
+	err := decoder.Decode(c)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		os.Exit(1)
 	}
+
+	Imagepath = c.Imagepath
+	Thumbpath = c.Thumbpath
+	DBpath = c.DBpath
+	Rest = c.Rest
+	Bot = c.Bot
+
+	log.Println("Parsed the following values: ", Imagepath, Thumbpath, DBpath, Rest, Bot)
 }
