@@ -4,39 +4,26 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/aimless/g0/conf"
 	"log"
 	"os"
 	"strconv"
-	"time"
 )
 
+// Public Config struct for json parser.
 type DbConfig struct {
+	DbEngine  string
 	DbFile    string
 	TblImages string
 	// Tbl$name for more tables in the database
+	// and add Tbl$name in config.json
 }
 type Db struct {
-	DbFile       string
-	DbImageTable string
+	DbFile       string // remove later, when refactored
+	DbImageTable string // <-
 
-	conn *sql.DB
+	conn *sql.DB // change
 }
-
-type Image struct {
-	Id        int
-	Hash      string
-	Name      string
-	Thumbnail string
-	Timestamp time.Time
-	Url       string
-	Network   string
-	Channel   string
-	User      string
-}
-
-var (
-	Connection *sql.DB
-)
 
 func NewDb(DbFile string) (*Db, error) {
 	var err error
@@ -76,6 +63,17 @@ func NewDb(DbFile string) (*Db, error) {
 
 func (db *Db) Close() {
 	db.conn.Close()
+}
+
+func (db *Db) Exec2(query string, args ...interface{}) (sql.Result, error) {
+	if db.conn == nil {
+		db.conn, err := sql.Open(conf.Data.DbEngine, conf.Data.DbFile)
+		if err != nil {
+			log.Printf("Db.Exec2: %s\n", err.Error())
+			return nil, err
+		}
+	}
+	return db.conn.Exec(query, args...)
 }
 
 func (db *Db) Exec(query string) (sql.Result, error) {
