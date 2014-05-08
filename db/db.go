@@ -4,27 +4,17 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/aimless/g0/conf"
 	"log"
-	"os"
-	"strconv"
 )
 
-// Public Config struct for json parser.
-type DbConfig struct {
-	DbEngine  string
-	DbFile    string
-	TblImages string
-	// Tbl$name for more tables in the database
-	// and add Tbl$name in config.json
-}
-type Db struct {
-	DbFile       string // remove later, when refactored
-	DbImageTable string // <-
+var (
+	DbEngine string = "sqlite3"
+	DbFile   string = "g0.db"
 
-	conn *sql.DB // change
-}
+	Connection *sql.DB
+)
 
+/*
 func NewDb(DbFile string) (*Db, error) {
 	var err error
 	if DbFile == "" {
@@ -60,210 +50,65 @@ func NewDb(DbFile string) (*Db, error) {
 	}
 	return _db, nil
 }
-
-func (db *Db) Close() {
-	db.conn.Close()
-}
-
-func (db *Db) Exec2(query string, args ...interface{}) (sql.Result, error) {
-	if db.conn == nil {
-		db.conn, err := sql.Open(conf.Data.DbEngine, conf.Data.DbFile)
+*/
+func Open() error {
+	if Connection == nil {
+		Connection, err := sql.Open(DbEngine, DbFile)
 		if err != nil {
-			log.Printf("Db.Exec2: %s\n", err.Error())
-			return nil, err
+			log.Printf("Db.Open: %s\n", err.Error())
+			return err
 		}
 	}
-	return db.conn.Exec(query, args...)
+	return nil
 }
 
-func (db *Db) Exec(query string) (sql.Result, error) {
+func Close() {
+	Connection.Close()
+}
+
+func (db *Db) Exec(query string, args ...interface{}) (sql.Result, error) {
 	var err error
 	if query == "" {
-		err = errors.New("Empty query")
-		log.Printf("Exec: Error:%s\n", err.Error())
+		err = errors.New("Query parameter is emtpy.")
+		log.Printf("Db.Exec2: %s\n", err.Error())
 		return nil, err
 	}
-	result, err := db.conn.Exec(query)
+
+	err = Open() // open db Connection
 	if err != nil {
-		log.Printf("Exec: Failed to execute query: %s Error:%s\n", query, err.Error())
-		return nil, err
+
 	}
-	return result, nil
+	result, err := Connection.Exec(query, args...)
+	return result, err
 }
 
-func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string) (int64, error) {
+func (db *Db) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	var err error
-	if name == "" {
-		err = errors.New("Empty filename")
-		log.Printf("NewImage: %s\n", err.Error())
-		return 0, err
-	}
-
-	query := "insert into " + db.DbImageTable + "(hash, name, thumbnail, url, network, chan, user) values('" +
-		hash + "', '" +
-		name + "', '" +
-		thumbnail + "', '" +
-		url + "', '" +
-		network + "', '" +
-		channel + "', '" +
-		user + "');"
-
-	result, err := db.Exec(query)
-	if err != nil {
-		log.Printf("NewImage: %s\n", err.Error())
-		return 0, err
-	}
-	id, _ := result.LastInsertId()
-	return id, nil
-}
-
-func (db *Db) GetImage(id int) (Image, error) {
-	var err error
-	if id < 1 {
-		err = errors.New("No id found.")
-		log.Printf("GetImage: %s\n", err.Error())
-		return Image{}, err
-	}
-
-	query := "select * from " + db.DbImageTable + " where id = ?"
-	row := db.conn.QueryRow(query, id)
-
-	result := Image{}
-	err = row.Scan(
-		&result.Id,
-		&result.Hash,
-		&result.Name,
-		&result.Thumbnail,
-		&result.Timestamp,
-		&result.Url,
-		&result.Network,
-		&result.Channel,
-		&result.User)
-
-	if err == sql.ErrNoRows {
-		err = errors.New("Query returned zero rows.")
-		log.Printf("GetImage: %s %s\n", err.Error(), query)
-		return Image{}, err
-	}
-
-	return result, nil
-}
-
-func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
-	var query string
-
-	if id > 0 {
-		idend := id - n
-		if idend < 1 { // do not accept negative values in where clause
-			idend = 1
-		}
-		query = "select * from " + db.DbImageTable + " where id <= " + strconv.Itoa(id) + " and id > " + strconv.Itoa(idend) + " order by tstamp desc"
-
-	} else {
-		query = "select * from " + db.DbImageTable + " order by id desc limit 0, " + strconv.Itoa(n)
-	}
-
-	rows, err := db.conn.Query(query)
-	if err != nil {
-		log.Printf("GetImages: %s\n", err)
+	if query == "" {
+		err = errors.New("Query parameter is emtpy.")
+		log.Printf("Db.Query: %s\n", err.Error())
 		return nil, err
 	}
 
-	var result []Image
-	for rows.Next() {
-		img := Image{}
-		err = rows.Scan(
-			&img.Id,
-			&img.Hash,
-			&img.Name,
-			&img.Thumbnail,
-			&img.Timestamp,
-			&img.Url,
-			&img.Network,
-			&img.Channel,
-			&img.User)
-
-		if err != nil {
-			log.Printf("GetImages: %s\n", err)
-			return nil, err
-		}
-
-		result = append(result, img)
-	}
-	return result, nil
-}
-func (db *Db) GetImages(start, offset int) ([]Image, error) {
-	var err error
-	if start < 1 {
-		err = errors.New("Start id too low.")
-		log.Printf("GetImages: %s\n", err)
-		return nil, err
-	}
-	if offset < 1 {
-		err = errors.New("Offset too low.")
-		log.Printf("GetImages: %s\n", err)
-		return nil, err
-	}
-
-	query := "select * from " + db.DbImageTable + " where id >= ? and id < ?"
-	rows, err := db.conn.Query(query, start, (start + offset))
+	err = Open() // open db Connection
 	if err != nil {
-		log.Printf("GetImages: %s\n", err)
+		log.Printf("Db.Query: %s\n", err.Error())
 		return nil, err
 	}
-
-	var result []Image
-	for rows.Next() {
-		img := Image{}
-		err = rows.Scan(
-			&img.Id,
-			&img.Hash,
-			&img.Name,
-			&img.Thumbnail,
-			&img.Timestamp,
-			&img.Url,
-			&img.Network,
-			&img.Channel,
-			&img.User)
-
-		if err != nil {
-			log.Printf("GetImages: %s\n", err)
-			return nil, err
-		}
-
-		result = append(result, img)
-	}
-
-	return result, nil
-}
-
-func (db *Db) DeleteImage(id int) bool {
-	if id < 1 {
-		return false
-	}
-
-	query := "delete from " + db.DbImageTable + " where id = ?"
-	result, err := db.conn.Exec(query, id)
-	affected, err := result.RowsAffected()
+	rows, err := Connection.Query(query, args...)
 	if err != nil {
-		log.Printf("DeleteImage: %s\n", err.Error())
-		return false
+		log.Printf("Db.Query: %s\n", err.Error())
+		return nil, err
 	}
-	if affected != 1 {
-		return false
-	}
-	return true
+	return rows, nil
 }
 
-func (db *Db) GetImageCount() (int, error) {
-	query := "select count(*) from " + db.DbImageTable
-	row := db.conn.QueryRow(query)
-	var c int
-	err := row.Scan(&c)
-	if err == sql.ErrNoRows {
-		err = errors.New("Query returned zero rows.")
-		log.Printf("GetImageCount: %s %s\n", err.Error(), query)
-		return 0, err
+// Ist mit Vorsicht zu genießen, hrm hm mmhm
+func (db *Db) Select(fields, from, where string) (*sql.Rows, error) {
+	query := "SELECT " + fields + " FROM " + from
+	if where != "" {
+		query += " WHERE " + where
 	}
-	return c, nil
+	rows, err := db.Query(query)
+	return rows, err
 }

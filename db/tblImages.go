@@ -3,8 +3,8 @@ package Db
 import (
 	_ "database/sql"
 	"errors"
-	"github.com/aimless/g0/conf"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -25,6 +25,14 @@ var (
 	structDb *Db
 )
 
+func (img *Image) Setup() error {
+	// Creates the table inside the databasefile
+	// if the table exists, nothing will be done
+	query := "CREATE TABLE g0_images();"
+	result, err := structDb.Exec2(query)
+	return nil
+}
+
 func (img *Image) Save(i Image) (id int, err error) {
 	if i.Name == "" {
 		err = errors.New("Name property is not set.")
@@ -32,11 +40,11 @@ func (img *Image) Save(i Image) (id int, err error) {
 		return 0, err
 	}
 
-	query := "INSERT INTO " + conf.Data.TblImages +
+	query := "INSERT INTO g0_images" + // + conf.Data.TblImages +
 		"(hash, name, thumbnail, url, network, chan, user) values(" +
 		"?, ?, ?, ?, ?, ?, ?);"
 
-	result, err := structDb.Exec2(query, i.Hash, i.Name, i.Thumbnail, i.Url,
+	result, err := structDb.Exec(query, i.Hash, i.Name, i.Thumbnail, i.Url,
 		i.Network, i.Channel, i.User)
 
 	if err != nil {
@@ -51,6 +59,7 @@ func (img *Image) Save(i Image) (id int, err error) {
 	}
 
 	// http://stackoverflow.com/a/6878625/1374884
+	// miiiight fail :>
 	const maxuint = ^uint(0)
 	const maxint = int(maxuint >> 1)
 	if id64 > int64(maxint) { // overflow check
@@ -60,10 +69,85 @@ func (img *Image) Save(i Image) (id int, err error) {
 	return int(id64), nil
 }
 
-func (img *Image) Open(id int) (Image, error) {
-	return Image{}, nil
+func (img *Image) Open(id int) (r Image, err error) {
+	if id < 1 {
+		err = errors.New("Input parameter id is not set.")
+		log.Printf("Image.Open: %s\n", err.Error())
+		return Image{}, err
+	}
+	i := Image{}
+	query := "SELECT * FROM g0_images WHERE id = ?"
+	row := structDb.Exec(query, id)
+
+	err = row.Scan(&i.Id, &i.Hash, &i.Name, &i.Thumbnail, &i.Timestamp, &i.Url,
+		&i.Network, &i.Channel, &i.User)
+
+	if err != nil {
+		log.Printf("Image.Open: %s\n", err.Error())
+		return Image{}, err
+	}
+
+	return i, nil
 }
 
-func (img *Image) OpenAll(id, count int) ([]Image, error) {
-	return []Image{}, nil
+func (img *Image) OpenAll() ([]Image, error) {
+	var result []Image
+	query := "SELECT * FROM g0_images;"
+	rows, err := structDb.Query(query)
+	if err != nil {
+		log.Printf("Image.OpenAll: %s\n", err.Error())
+		return result, err
+	}
+
+	// scanning
+	for rows.Next() {
+		i := new(Image)
+		err = rows.Scan(&i.Id, &i.Hash, &i.Name, &i.Thumbnail, &i.Timestamp, &i.Url,
+			&i.Network, &i.Channel, &i.User)
+
+		if err != nil {
+			log.Printf("Image.OpenAll: %s\n", err.Error())
+			continue
+		}
+		result = append(result, i)
+	}
+
+	return result, nil
+}
+
+func (img *Image) OpenLatest(id, n int) ([]Image, error) {
+	var result []Image
+	var query string
+
+	if id > 0 {
+		idend := id - n
+		if idend < 1 { // do not accept negative values in where clause
+			idend = 1
+		}
+		query = "select * from g0_images where id <= " + strconv.Itoa(id) + " and id > " + strconv.Itoa(idend) + " order by tstamp desc"
+
+	} else {
+		query = "select * from g0_images order by id desc limit 0, " + strconv.Itoa(n)
+	}
+
+	rows, err := structDb.Query(query)
+	if err != nil {
+		log.Printf("Image.OpenLatest: %s\n", err.Error())
+		return result, err
+	}
+
+	// scanning
+	for rows.Next() {
+		i := new(Image)
+		err = row.Scan(&i.Id, &i.Hash, &i.Name, &i.Thumbnail, &i.Timestamp, &i.Url,
+			&i.Network, &i.Channel, &i.User)
+
+		if err != nil {
+			log.Printf("Image.OpenAll: %s\n", err.Error())
+			continue
+		}
+		result = append(result, i)
+	}
+
+	return result, nil
 }
