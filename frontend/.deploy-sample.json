@@ -1,0 +1,17 @@
+{
+  "live": {
+    "host": "hostname",
+    "port": 22,
+    "src": "build/web",
+    "dest": "/path/on/server/",
+    "sep": "/"
+  },
+  "test": {
+    "host": "hostname",
+    "port": 22,
+    "src": "build/web",
+    "dest": "/path/on/server/",
+    "sep": "/"
+  }
+}
+

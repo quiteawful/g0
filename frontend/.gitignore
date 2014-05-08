@@ -3,7 +3,8 @@ node_modules
 /web/res/css/**.*
 /cache
 .ftppass
-build/
+.deploy.json
+/build
 
 packages
 .project

@@ -2,8 +2,9 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    deploy: grunt.file.readJSON('.deploy.json'),
     sass: {
-      dist: {
+      test: {
         options: {
           style: 'expanded',
           cacheLocation: 'cache/sass-cache'
@@ -23,15 +24,20 @@ module.exports = function(grunt) {
       }
     },
     'sftp-deploy': {
-      build: {
+      test: {
         auth: {
-          host: '188.226.132.29',
-          port: 22,
-          authKey: 'key1'
+          host: '<%= deploy.test.host %>',
+          port: '<%= deploy.test.port %>',
+          authKey: 'test'
         },
-        src: 'build',
-        dest: '/var/www/slemgrim.com/public/g0',
-        server_sep: '/'
+        src: '<%= deploy.test.src %>',
+        dest: '<%= deploy.test.dest %>',
+        server_sep: '<%= deploy.test.sep %>'
+      }
+    },
+    shell: {
+      build: {
+        command: 'pub build'
       }
     },
     watch: {
@@ -43,8 +49,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-sftp-deploy');
+  grunt.loadNpmTasks('grunt-shell');
 
   grunt.registerTask('default', ['sass:dist']);
-  grunt.registerTask('build', ['sass:build']);
-  grunt.registerTask('deploy', ['sass:build', 'sftp-deploy']);
+  grunt.registerTask('build-test', ['sass:test', 'shell:build']);
+  grunt.registerTask('build-live', ['sass:build', 'shell:build']);
+
+  grunt.registerTask('deploy-test', ['build-test', 'sftp-deploy:test']);
+  grunt.registerTask('deploy-live', ['build-live', 'sftp-deploy:live']);
+
 };

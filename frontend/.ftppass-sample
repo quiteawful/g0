@@ -1,0 +1,11 @@
+{
+  "test": {
+    "username": "username1",
+    "password": "password2"
+  },
+  "live": {
+    "username": "username2",
+    "password": "password2"
+  }
+}
+
