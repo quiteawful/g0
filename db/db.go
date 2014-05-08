@@ -52,12 +52,14 @@ func NewDb(DbFile string) (*Db, error) {
 }
 */
 func Open() error {
+	var err error
 	if Connection == nil {
-		Connection, err := sql.Open(DbEngine, DbFile)
+		Connection, err = sql.Open(DbEngine, DbFile)
 		if err != nil {
 			log.Printf("Db.Open: %s\n", err.Error())
 			return err
 		}
+
 	}
 	return nil
 }
@@ -66,7 +68,7 @@ func Close() {
 	Connection.Close()
 }
 
-func (db *Db) Exec(query string, args ...interface{}) (sql.Result, error) {
+func Exec(query string, args ...interface{}) (sql.Result, error) {
 	var err error
 	if query == "" {
 		err = errors.New("Query parameter is emtpy.")
@@ -82,7 +84,7 @@ func (db *Db) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return result, err
 }
 
-func (db *Db) Query(query string, args ...interface{}) (*sql.Rows, error) {
+func Query(query string, args ...interface{}) (*sql.Rows, error) {
 	var err error
 	if query == "" {
 		err = errors.New("Query parameter is emtpy.")
@@ -104,11 +106,11 @@ func (db *Db) Query(query string, args ...interface{}) (*sql.Rows, error) {
 }
 
 // Ist mit Vorsicht zu genießen, hrm hm mmhm
-func (db *Db) Select(fields, from, where string) (*sql.Rows, error) {
+func Select(fields, from, where string) (*sql.Rows, error) {
 	query := "SELECT " + fields + " FROM " + from
 	if where != "" {
 		query += " WHERE " + where
 	}
-	rows, err := db.Query(query)
+	rows, err := Query(query)
 	return rows, err
 }

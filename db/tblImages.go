@@ -21,15 +21,17 @@ type Image struct {
 	User      string
 }
 
-var (
-	structDb *Db
-)
+var ()
 
 func (img *Image) Setup() error {
 	// Creates the table inside the databasefile
 	// if the table exists, nothing will be done
 	query := "CREATE TABLE g0_images();"
-	result, err := structDb.Exec2(query)
+	_, err := Exec(query)
+	if err != nil {
+		log.Printf("Image.Setup: %s\n", err.Error())
+		return err
+	}
 	return nil
 }
 
@@ -44,7 +46,7 @@ func (img *Image) Save(i Image) (id int, err error) {
 		"(hash, name, thumbnail, url, network, chan, user) values(" +
 		"?, ?, ?, ?, ?, ?, ?);"
 
-	result, err := structDb.Exec(query, i.Hash, i.Name, i.Thumbnail, i.Url,
+	result, err := Exec(query, i.Hash, i.Name, i.Thumbnail, i.Url,
 		i.Network, i.Channel, i.User)
 
 	if err != nil {
@@ -77,7 +79,7 @@ func (img *Image) Open(id int) (r Image, err error) {
 	}
 	i := Image{}
 	query := "SELECT * FROM g0_images WHERE id = ?"
-	row := structDb.Exec(query, id)
+	row, err := Query(query, id)
 
 	err = row.Scan(&i.Id, &i.Hash, &i.Name, &i.Thumbnail, &i.Timestamp, &i.Url,
 		&i.Network, &i.Channel, &i.User)
@@ -93,7 +95,7 @@ func (img *Image) Open(id int) (r Image, err error) {
 func (img *Image) OpenAll() ([]Image, error) {
 	var result []Image
 	query := "SELECT * FROM g0_images;"
-	rows, err := structDb.Query(query)
+	rows, err := Query(query)
 	if err != nil {
 		log.Printf("Image.OpenAll: %s\n", err.Error())
 		return result, err
@@ -101,7 +103,7 @@ func (img *Image) OpenAll() ([]Image, error) {
 
 	// scanning
 	for rows.Next() {
-		i := new(Image)
+		i := Image{}
 		err = rows.Scan(&i.Id, &i.Hash, &i.Name, &i.Thumbnail, &i.Timestamp, &i.Url,
 			&i.Network, &i.Channel, &i.User)
 
@@ -130,7 +132,7 @@ func (img *Image) OpenLatest(id, n int) ([]Image, error) {
 		query = "select * from g0_images order by id desc limit 0, " + strconv.Itoa(n)
 	}
 
-	rows, err := structDb.Query(query)
+	rows, err := Query(query)
 	if err != nil {
 		log.Printf("Image.OpenLatest: %s\n", err.Error())
 		return result, err
@@ -138,8 +140,8 @@ func (img *Image) OpenLatest(id, n int) ([]Image, error) {
 
 	// scanning
 	for rows.Next() {
-		i := new(Image)
-		err = row.Scan(&i.Id, &i.Hash, &i.Name, &i.Thumbnail, &i.Timestamp, &i.Url,
+		i := Image{}
+		err = rows.Scan(&i.Id, &i.Hash, &i.Name, &i.Thumbnail, &i.Timestamp, &i.Url,
 			&i.Network, &i.Channel, &i.User)
 
 		if err != nil {
