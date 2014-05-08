@@ -4,3 +4,4 @@ dependencies:
   browser: any
   query_string: any
   intl: any
+  dart_config: any
