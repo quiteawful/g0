@@ -33,6 +33,16 @@ module.exports = function(grunt) {
         src: '<%= deploy.test.src %>',
         dest: '<%= deploy.test.dest %>',
         server_sep: '<%= deploy.test.sep %>'
+      },
+      live: {
+        auth: {
+          host: '<%= deploy.live.host %>',
+          port: '<%= deploy.live.port %>',
+          authKey: 'live'
+        },
+        src: '<%= deploy.live.src %>',
+        dest: '<%= deploy.live.dest %>',
+        server_sep: '<%= deploy.live.sep %>'
       }
     },
     shell: {
