@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/aimless/g0/conf"
 	"github.com/aimless/g0/db"
 	"github.com/aimless/g0/ircbot"
