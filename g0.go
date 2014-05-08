@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/aimless/g0/api"
 	"github.com/aimless/g0/conf"
 	"github.com/aimless/g0/db"
 	"github.com/aimless/g0/ircbot"
@@ -10,14 +11,24 @@ import (
 )
 
 func main() {
-	Init("init")
-	conf.Bot.LinkChannel = make(chan IrcBot.Link)
+	api := new(Api.Api)
+	bot := new(IrcBot.Bot)
 
-	dbase, _ := Db.NewDb(conf.Data.DbFile)
+	conf.Fill(api)
+	conf.Fill(bot)
+
+	go api.Run()
+	go bot.Run()
+
+	bot.LinkChannel = make(chan IrcBot.Link)
+
+	db := new(Db.DbConfig)
+	conf.Fill(db)
+	dbase, _ := Db.NewDb(db.DbFile)
 
 	//hässliche blocking schleife ist hässlich
 	for true {
-		link := <-conf.Bot.LinkChannel
+		link := <-bot.LinkChannel
 		f, hash, err := util.DownloadImage(link.URL)
 		if err != nil {
 			log.Println(err.Error())
@@ -30,9 +41,4 @@ func main() {
 
 		dbase.NewImage(hash, f, "thumb"+f, link.URL, link.Network, link.Channel, link.Poster)
 	}
-}
-
-func Init(placeholder string) {
-	go conf.Rest.Run()
-	go conf.Bot.Run()
 }
