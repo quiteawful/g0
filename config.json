@@ -1,7 +1,10 @@
 {
     "Imagepath": "/tmp/",
     "Thumbpath": "/tmp/",
-	"DBpath": "g0.db",
+	"Db": {
+		"DbFile": "g0.db",
+		"TblImages": "g0_images"
+	},
     "Rest": {
         "Addr": ":31337"
     },

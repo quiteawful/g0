@@ -4,6 +4,7 @@ package conf
 import (
 	"encoding/json"
 	"github.com/aimless/g0/api"
+	"github.com/aimless/g0/db"
 	"github.com/aimless/g0/ircbot"
 	"log"
 	"os"
@@ -12,7 +13,7 @@ import (
 type JSONconf struct {
 	Imagepath string
 	Thumbpath string
-	DBpath    string
+	Db        *Db.DbConfig
 	Rest      *Api.Api
 	Bot       *IrcBot.Bot
 }
@@ -20,7 +21,7 @@ type JSONconf struct {
 var (
 	Imagepath = ""
 	Thumbpath = ""
-	DBpath    = ""
+	Data      = new(Db.DbConfig)
 	Rest      = new(Api.Api)
 	Bot       = new(IrcBot.Bot)
 )
@@ -38,9 +39,9 @@ func init() {
 
 	Imagepath = c.Imagepath
 	Thumbpath = c.Thumbpath
-	DBpath = c.DBpath
+	Data = c.Db
 	Rest = c.Rest
 	Bot = c.Bot
 
-	log.Println("Parsed the following values: ", Imagepath, Thumbpath, DBpath, Rest, Bot)
+	log.Println("Parsed the following values: ", Imagepath, Thumbpath, Data, Rest, Bot)
 }

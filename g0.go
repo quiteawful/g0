@@ -13,7 +13,7 @@ func main() {
 	Init("init")
 	conf.Bot.LinkChannel = make(chan IrcBot.Link)
 
-	dbase, _ := db.NewDb(conf.DBpath)
+	dbase, _ := Db.NewDb(conf.Data.DbFile)
 
 	//hässliche blocking schleife ist hässlich
 	for true {

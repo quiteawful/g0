@@ -1,4 +1,4 @@
-package db
+package Db
 
 import (
 	"database/sql"
@@ -10,10 +10,16 @@ import (
 	"time"
 )
 
+type DbConfig struct {
+	DbFile    string
+	TblImages string
+	// Tbl$name for more tables in the database
+}
 type Db struct {
 	DbFile       string
 	DbImageTable string
-	conn         *sql.DB
+
+	conn *sql.DB
 }
 
 type Image struct {
@@ -27,6 +33,10 @@ type Image struct {
 	Channel   string
 	User      string
 }
+
+var (
+	Connection *sql.DB
+)
 
 func NewDb(DbFile string) (*Db, error) {
 	var err error
