@@ -6,7 +6,7 @@ class LiveApi implements Api {
   LiveApi(this._host);
 
   Future<Map> getImages({String offset: '0', int count: 20}){
-    if(offset == null){
+    if(offset == null || offset == ''){
       offset = '0';
     }
 
