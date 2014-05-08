@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/aimless/g0/conf"
-	"github.com/aimless/g0/db"
 	"github.com/aimless/g0/ircbot"
 	"github.com/aimless/g0/util"
 	"github.com/aimless/g0/util/img"

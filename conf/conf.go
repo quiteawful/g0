@@ -13,15 +13,24 @@ import (
 type JSONconf struct {
 	Imagepath string
 	Thumbpath string
-	Db        *Db.DbConfig
+	Db        *DbConfig
 	Rest      *Api.Api
 	Bot       *IrcBot.Bot
+}
+
+// Public Config struct for json parser.
+type DbConfig struct {
+	DbEngine  string
+	DbFile    string
+	TblImages string
+	// Tbl$name for more tables in the database
+	// and add Tbl$name in config.json
 }
 
 var (
 	Imagepath = ""
 	Thumbpath = ""
-	Data      = new(Db.DbConfig)
+	Data      = new(DbConfig)
 	Rest      = new(Api.Api)
 	Bot       = new(IrcBot.Bot)
 )
