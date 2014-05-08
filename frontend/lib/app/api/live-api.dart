@@ -10,7 +10,7 @@ class LiveApi implements Api {
       offset = '0';
     }
 
-    String url = '${_host}/${offset}/${count}/index.html';
+    String url = '${_host}/${offset}/${count}';
     Future requestFuture = HttpRequest.getString(url)
                           .then(_onDataLoaded)
                           .catchError(_handleError);
