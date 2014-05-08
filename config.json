@@ -1,23 +1,17 @@
 {
     "Imagepath": "/tmp/",
     "Thumbpath": "/tmp/",
-	"Db": {
-		"DbFile": "g0.db",
-		"TblImages": "g0_images"
-	},
-    "Rest": {
-        "Addr": ":31337"
-    },
-    "Bot": {
-        "Nickname": "g0bot",
-        "Realname": "g0bot",
-        "Connections": [
-            {
-                "Address": "tardis.nerdlife.de:6697",
-                "Channels": [
-                    "#g0"
-                ]
-            }
-        ]
-    }
+    "DbFile": "g0.db",
+    "TblImages": "g0_images",
+    "Addr": ":31337",
+    "Nickname": "g0bot",
+    "Realname": "g0bot",
+    "Connections": [
+        {
+            "Address": "tardis.nerdlife.de:6697",
+            "Channels": [
+                "#g0"
+            ]
+        }
+    ]
 }
