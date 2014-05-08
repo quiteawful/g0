@@ -51,7 +51,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-sftp-deploy');
   grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('default', ['sass:dist']);
+  grunt.registerTask('default', ['sass:test']);
   grunt.registerTask('build-test', ['sass:test', 'shell:build']);
   grunt.registerTask('build-live', ['sass:build', 'shell:build']);
 
