@@ -2,21 +2,12 @@ package main
 
 import (
 	"fmt"
-	"g0/api"
 	"g0/conf"
 	"g0/db"
 	"g0/ircbot"
 	"g0/util"
 	"g0/util/img"
 )
-
-type JSONconf struct {
-	Imagepath string
-	Thumbpath string
-	DBpath    string
-	Rest      *Api.Api
-	Bot       *IrcBot.Bot
-}
 
 func main() {
 	Init("init")
