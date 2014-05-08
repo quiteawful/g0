@@ -22,7 +22,7 @@ type Image struct {
 	Date  int64  `json:"date"`
 	Nick  string `json:"user"`
 	Chan  string `json:"channel"`
-	Link  string `json:"source`
+	Link  string `json:"source"`
 }
 
 type Api struct {
