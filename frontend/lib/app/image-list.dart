@@ -65,7 +65,7 @@ class ImageList {
           new Duration(milliseconds: delay),
           () => item.classes.add('loaded')
       );
-      delay += 50;
+      delay += 30;
     });
   }
 
@@ -112,8 +112,12 @@ class ImageList {
    * resize events
    */
   void _getPerPage(){
+
+    // bad hack. We need hight offset to get enaugh images to force scrollbar
+    int heightOffset = 20;
+
     _pageWidth = window.innerWidth;
-    _pageHeight = window.innerHeight - _imageList.offsetTop;
+    _pageHeight = window.innerHeight - _imageList.offsetTop + heightOffset;
     perRow = (_pageWidth / _imageWidth).floor();
 
     int newPerPage = (_pageWidth / _imageWidth).floor()

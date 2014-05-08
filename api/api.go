@@ -3,9 +3,9 @@ package Api
 
 import (
 	"errors"
-	"fmt"
-	"g0/db"
+	"github.com/aimless/g0/db"
 	"github.com/ant0ine/go-json-rest/rest"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -65,10 +65,10 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "NYAN not found", 405)
 		return
 	}
-	dbase, _ := db.NewDb("g0.db")
+	dbase, _ := Db.NewDb("g0.db")
 	dbarray, err := dbase.GetLatestImages(imgid, count)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 	}
 	for _, ele := range dbarray {
 		var tmpImage Image

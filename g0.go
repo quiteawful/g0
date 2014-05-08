@@ -2,25 +2,26 @@ package main
 
 import (
 	"fmt"
-	"g0/conf"
-	"g0/db"
-	"g0/ircbot"
-	"g0/util"
-	"g0/util/img"
+	"github.com/aimless/g0/conf"
+	"github.com/aimless/g0/db"
+	"github.com/aimless/g0/ircbot"
+	"github.com/aimless/g0/util"
+	"github.com/aimless/g0/util/img"
+	"log"
 )
 
 func main() {
 	Init("init")
-	conf.Conf.Bot.LinkChannel = make(chan IrcBot.Link)
+	conf.Bot.LinkChannel = make(chan IrcBot.Link)
 
-	dbase, _ := db.NewDb(conf.Conf.DBpath)
+	dbase, _ := Db.NewDb(conf.Data.DbFile)
 
 	//hässliche blocking schleife ist hässlich
 	for true {
-		link := <-conf.Conf.Bot.LinkChannel
+		link := <-conf.Bot.LinkChannel
 		f, hash, err := util.DownloadImage(link.URL)
 		if err != nil {
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 			continue
 		}
 
@@ -33,6 +34,6 @@ func main() {
 }
 
 func Init(placeholder string) {
-	go conf.Conf.Rest.Run()
-	go conf.Conf.Bot.Run()
+	go conf.Rest.Run()
+	go conf.Bot.Run()
 }

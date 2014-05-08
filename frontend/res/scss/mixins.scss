@@ -19,3 +19,11 @@
          -o-transition: $transition-property $transition-time $method;
             transition: $transition-property $transition-time $method;
 }
+
+@mixin transform($property: none) {
+    -webkit-transform: $property;
+       -moz-transform: $property;
+        -ms-transform: $property;
+         -o-transform: $property;
+            transform: $property;
+}
