@@ -3,6 +3,7 @@ library G0;
 import 'dart:html';
 import 'dart:async';
 import 'dart:math';
+import 'dart:convert';
 import 'package:intl/intl.dart';
 
 part 'app/centered-float-list.dart';
@@ -58,16 +59,19 @@ class G0 {
     Completer completer = new Completer();
     imageList.showLoading();
     Future<Map> future = api.getImages(offset: offset, count: count);
-    future.then((result) => imageList.showImages(result))
-          .then((_){
-             if(!centeredFloatList.isInitialized){
-               centeredFloatList.init();
-             }
-             imageList.hideLoading();
-             infiniteLoad.updateTargetHeight();
-             infiniteLoad.activate();
-             completer.complete();
-          }
+    future.then((result){
+      if(result != null){
+        imageList.showImages(result);
+      }
+    }).then((_){
+         if(!centeredFloatList.isInitialized){
+           centeredFloatList.init();
+         }
+         imageList.hideLoading();
+         infiniteLoad.updateTargetHeight();
+         infiniteLoad.activate();
+         completer.complete();
+      }
     );
     return completer.future;
   }
