@@ -53,6 +53,7 @@ func (a *Api) Run() (err error) {
 	return nil
 }
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
 	imgid, err := strconv.Atoi(r.PathParam("imgid"))
