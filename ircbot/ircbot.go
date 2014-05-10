@@ -6,6 +6,7 @@ import (
 	"github.com/thoj/go-ircevent"
 	"log"
 	"regexp"
+	"strings"
 )
 
 var chprefixes = map[uint8]bool{
@@ -28,6 +29,7 @@ type Bot struct {
 type Conn struct {
 	Connection *irc.Connection
 	Address    string
+	Network    string "unknownnetid"
 	Channels   []string
 }
 
@@ -49,6 +51,16 @@ func (b *Bot) Run() {
 		if ircErr != nil {
 			log.Println(ircErr.Error())
 		}
+
+		ircCon.AddCallback("005", func(e *irc.Event) {
+			for _, j := range strings.Fields(e.Raw) {
+				if len(j) > 7 && j[:7] == "NETWORK" {
+					i.Network = j[8:]
+					log.Println("Network name is: " + i.Network)
+				}
+			}
+		})
+
 		ircCon.AddCallback("001", func(e *irc.Event) {
 			for _, j := range i.Channels {
 				log.Println("Joining: " + j + " on " + i.Address)
@@ -58,10 +70,10 @@ func (b *Bot) Run() {
 		ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
 			if urlregex.MatchString(e.Message()) {
 				urlString := urlregex.FindStringSubmatch(e.Message())
-				ircCon.Privmsg(e.Arguments[0], ">"+urlString[0])
+				//ircCon.Privmsg(e.Arguments[0], ">"+urlString[0])
 
 				if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
-					b.LinkChannel <- Link{urlString[0], "unknownnetwork", ircch, e.Nick}
+					b.LinkChannel <- Link{urlString[0], i.Network, ircch, e.Nick}
 				}
 			}
 		})
