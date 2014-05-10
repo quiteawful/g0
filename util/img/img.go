@@ -17,7 +17,7 @@ import (
 )
 
 func GetImageFromFile(f string) (image.Image, error) {
-	fi, ferr := os.Open("/root/images" + f)
+	fi, ferr := os.Open("/root/images/" + f)
 	if ferr != nil {
 		fmt.Println(ferr.Error())
 		return nil, ferr
