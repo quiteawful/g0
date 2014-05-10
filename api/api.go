@@ -53,6 +53,7 @@ func (a *Api) Run() (err error) {
 	return nil
 }
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
 	imgid, err := strconv.Atoi(r.PathParam("imgid"))
@@ -83,8 +84,8 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 	}
 	w.WriteJson(
 		&IDTest{
-			ImageSrc: "http://dum.my/images/",
-			ThumbSrc: "http://dum.my/thumbs/",
+			ImageSrc: "http://aidskrebs.net/images/",
+			ThumbSrc: "http://aidskrebs.net/images/",
 			Images:   imgreturn,
 		})
 }

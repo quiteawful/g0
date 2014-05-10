@@ -17,7 +17,7 @@ import (
 )
 
 func GetImageFromFile(f string) (image.Image, error) {
-	fi, ferr := os.Open(f)
+	fi, ferr := os.Open("/root/images/" + f)
 	if ferr != nil {
 		fmt.Println(ferr.Error())
 		return nil, ferr
@@ -52,7 +52,7 @@ func MakeThumbnail(src image.Image, x int, y int) (image.Image, error) {
 }
 
 func SaveImageAsJPG(f string, src image.Image) error {
-	fi, ferr := os.Create(f)
+	fi, ferr := os.Create("/root/images/" + f)
 	if ferr != nil {
 		fmt.Println(ferr.Error())
 		return ferr

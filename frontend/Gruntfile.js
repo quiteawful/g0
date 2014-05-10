@@ -33,6 +33,16 @@ module.exports = function(grunt) {
         src: '<%= deploy.test.src %>',
         dest: '<%= deploy.test.dest %>',
         server_sep: '<%= deploy.test.sep %>'
+      },
+      live: {
+        auth: {
+          host: '<%= deploy.live.host %>',
+          port: '<%= deploy.live.port %>',
+          authKey: 'live'
+        },
+        src: '<%= deploy.live.src %>',
+        dest: '<%= deploy.live.dest %>',
+        server_sep: '<%= deploy.live.sep %>'
       }
     },
     shell: {
@@ -51,7 +61,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-sftp-deploy');
   grunt.loadNpmTasks('grunt-shell');
 
-  grunt.registerTask('default', ['sass:dist']);
+  grunt.registerTask('default', ['sass:test']);
   grunt.registerTask('build-test', ['sass:test', 'shell:build']);
   grunt.registerTask('build-live', ['sass:build', 'shell:build']);
 

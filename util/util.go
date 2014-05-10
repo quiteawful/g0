@@ -18,7 +18,7 @@ var StdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 var imageregex = regexp.MustCompile(`image\/(.+)`)
 
 func DownloadImage(link string) (filename, hash string, errret error) {
-	_, err := url.Parse(link) // ./util.go:20: u declared and not used
+	_, err := url.Parse(link)
 	if err != nil {
 		return "", "", err
 	}
@@ -53,7 +53,7 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 			h := md5.New()
 			h.Write(b)
 			filename = newLenChars(6, StdChars) + "." + urlType[1]
-			ioutil.WriteFile(filename, b, 0644)
+			ioutil.WriteFile("/root/images/"+filename, b, 0644)
 
 			return filename, fmt.Sprintf("%x", h.Sum(nil)), nil
 		}
