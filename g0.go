@@ -39,6 +39,6 @@ func main() {
 		thmb, _ := img.MakeThumbnail(imgbytes, 150, 150)
 		img.SaveImageAsJPG("thumb-"+f, thmb)
 
-		dbase.NewImage(hash, f, "thumb"+f, link.URL, link.Network, link.Channel, link.Poster)
+		dbase.NewImage(hash, f, "thumb-"+f, link.URL, link.Network, link.Channel, link.Poster)
 	}
 }
