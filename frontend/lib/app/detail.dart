@@ -97,11 +97,7 @@ class Detail{
     _source.innerHtml = source;
     _source.setAttribute('href', source);
 
-    window.history.pushState(
-        null,
-        imageUrl,
-        window.location.pathname + '?offset=$id'
-    );
+    _setUrl();
     _showCover();
     _showDetail();
   }
@@ -142,11 +138,22 @@ class Detail{
 
     _imageContainer.innerHtml = '';
     _hideCover();
+    _resetUrl();
+  }
 
+  void _resetUrl(){
     window.history.pushState(
         null,
         imageUrl,
         window.location.pathname
+    );
+  }
+
+  void _setUrl(){
+    window.history.pushState(
+        null,
+        imageUrl,
+        window.location.pathname + '?offset=$id'
     );
   }
 
