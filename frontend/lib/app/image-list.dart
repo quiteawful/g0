@@ -48,10 +48,12 @@ class ImageList {
     window.onResize.listen((_) => _getPerPage());
     window.onKeyDown.listen((KeyboardEvent evt){
       switch(evt.keyCode){
-        case 37:
+        case 37: //Left
+        case 65: //A
           prev();
           break;
-        case 39:
+        case 39: //Right
+        case 68: //D
           next();
           break;
       }
