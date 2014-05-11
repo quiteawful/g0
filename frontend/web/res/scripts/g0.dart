@@ -11,8 +11,8 @@ G0 go;
 void main() {
 
   loadConfig('config.json').then((Map config) {
-    Api api = new FixtureApi();
-    //Api api = new LiveApi(config['api']);
+    //Api api = new FixtureApi();
+    Api api = new LiveApi(config['api'], config['reload-delay']);
 
     String query = window.location.search;
     Map queryData = QueryString.parse(query);

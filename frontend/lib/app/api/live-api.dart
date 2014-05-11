@@ -3,9 +3,24 @@ part of G0;
 class LiveApi implements Api {
 
   String _host;
-  LiveApi(this._host);
+  int _reloadDelay = 0;
+  int _loads = 0;
+
+  Stopwatch _stopwatch = new Stopwatch()..start();
+
+  LiveApi(this._host, this._reloadDelay){
+    if(_reloadDelay == null){
+      _reloadDelay = 0;
+    }
+  }
 
   Future<Map> getImages({String offset: '0', int count: 20}){
+    if(_loads != 0 && _stopwatch.elapsedMilliseconds < _reloadDelay){
+      return new Future((){ return null; });
+    }
+    _stopwatch.reset();
+    _loads++;
+
     if(offset == null || offset == ''){
       offset = '0';
     }

@@ -1,3 +1,4 @@
 {
   "api": "http://www.example.com/api",
+  "reload-delay": 1000
 }
