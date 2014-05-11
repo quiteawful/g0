@@ -79,7 +79,7 @@ class Detail{
    * singe image
    */
   void show(LIElement target){
-
+    _imageContainer.innerHtml = '';
     _retrieveImageMeta(target);
 
     assert(id != null);
@@ -102,7 +102,6 @@ class Detail{
         imageUrl,
         window.location.pathname + '?offset=$id'
     );
-    _hideDetail();
     _showCover();
     _showDetail();
   }
