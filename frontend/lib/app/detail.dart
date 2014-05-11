@@ -6,6 +6,7 @@ part of G0;
 class Detail{
 
   // DOM Elements
+  Element _body;
   Element _element;
   Element _cover;
   Element _spinner;
@@ -39,6 +40,7 @@ class Detail{
    * Search document for neccessary DOM elements
    */
   void _getElements(){
+    _body = querySelector('body');
     _element = querySelector('#container .detail');
     _cover = querySelector('#container .cover');
     _spinner = _element.querySelector('.spinner');
@@ -122,12 +124,15 @@ class Detail{
     _spinner.classes.add('show');
     _element.classes.add('show');
     _footer.classes.add('show');
+    _body.classes.add('detail-open');
   }
 
   void _hideDetail(){
     _spinner.classes.remove('show');
     _element.classes.remove('show');
     _footer.classes.remove('show');
+    _body.classes.remove('detail-open');
+
     _imageContainer.innerHtml = '';
     _hideCover();
 

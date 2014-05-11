@@ -19,6 +19,10 @@ body {
 
 body {
   background: $background-color;
+
+  &.detail-open {
+    overflow: hidden;
+  }
 }
 
 a {
