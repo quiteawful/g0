@@ -45,6 +45,10 @@ class ImageList {
     if(_imageList != null){
       _loadingElement = _imageList.querySelector('.loading');
     }
+    _eventBindings();
+  }
+
+  void _eventBindings(){
     window.onResize.listen((_) => _getPerPage());
     window.onKeyDown.listen((KeyboardEvent evt){
       switch(evt.keyCode){
@@ -59,6 +63,8 @@ class ImageList {
       }
     });
 
+    detail.onUp.listen((_) => prev());
+    detail.onDown.listen((_) => next());
   }
 
   /**

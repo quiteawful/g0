@@ -5,6 +5,9 @@ part of G0;
  */
 class Detail{
 
+  int _scrollDelay = 300;
+  Stopwatch _stopwatch = new Stopwatch()..start();
+
   // DOM Elements
   Element _body;
   Element _element;
@@ -31,12 +34,18 @@ class Detail{
 
   ImageElement _loadedImage;
 
-  Point<int> mousePos;
+  Point<int> _mousePos;
 
   bool _isShown = false;
   bool get isShown => _isShown;
 
   DateFormat _dateFormat = new DateFormat(G0.DATE_FORMAT);
+
+  StreamController _onUp = new StreamController.broadcast();
+  StreamController _onDown = new StreamController.broadcast();
+
+  Stream get onUp => _onUp.stream;
+  Stream get onDown => _onDown.stream;
 
   Detail(){
     _getElements();
@@ -226,16 +235,35 @@ class Detail{
   }
 
   void _handleMouseMove(MouseEvent evt){
-    mousePos = new Point<int>(evt.client.x, evt.client.y);
+    _mousePos = new Point<int>(evt.client.x, evt.client.y);
   }
 
   void _handleMouseWheel(WheelEvent evt){
-    if(_isShown && _isMouseOnDetail){
-
+    if(_stopwatch.elapsedMilliseconds > _scrollDelay
+        && _isShown && !_isMouseOnDetail()
+    ){
+      _stopwatch.reset();
+      if(evt.deltaY > 0){
+        _onDown.add(true);
+      } else if (evt.deltaY < 0){
+        _onUp.add(true);
+      }
     }
   }
 
+  /**
+   * Detects if mouse is over detail view.
+   * TODO: read padding and remove hardcoded value
+   */
   bool _isMouseOnDetail(){
-
+    if(_mousePos != null
+      && _mousePos.x > _element.offsetLeft + 20
+      && _mousePos.x < _element.offsetLeft + _element.offset.width - 20
+      && _mousePos.y > _element.offsetTop + 20
+      && _mousePos.y < _element.offsetTop + _element.offset.height - 20
+    ){
+      return true;
+    }
+    return false;
   }
 }
