@@ -31,6 +31,11 @@ class Detail{
 
   ImageElement _loadedImage;
 
+  Point<int> mousePos;
+
+  bool _isShown = false;
+  bool get isShown => _isShown;
+
   DateFormat _dateFormat = new DateFormat(G0.DATE_FORMAT);
 
   Detail(){
@@ -63,6 +68,8 @@ class Detail{
 
     window.onResize.listen((_) => _onResize());
     window.onKeyUp.listen(_handleKeys);
+    window.onMouseWheel.listen(_handleMouseWheel);
+    window.onMouseMove.listen(_handleMouseMove);
   }
 
   /**
@@ -128,6 +135,7 @@ class Detail{
     _element.classes.add('show');
     _footer.classes.add('show');
     _body.classes.add('detail-open');
+    _isShown = true;
   }
 
   void _hideDetail(){
@@ -139,6 +147,7 @@ class Detail{
     _imageContainer.innerHtml = '';
     _hideCover();
     _resetUrl();
+    _isShown = false;
   }
 
   void _resetUrl(){
@@ -214,5 +223,19 @@ class Detail{
         _hideDetail();
         break;
     }
+  }
+
+  void _handleMouseMove(MouseEvent evt){
+    mousePos = new Point<int>(evt.client.x, evt.client.y);
+  }
+
+  void _handleMouseWheel(WheelEvent evt){
+    if(_isShown && _isMouseOnDetail){
+
+    }
+  }
+
+  bool _isMouseOnDetail(){
+
   }
 }
