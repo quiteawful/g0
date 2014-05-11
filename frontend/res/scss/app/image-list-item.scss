@@ -17,6 +17,7 @@
     display: block;
     width: 100%;
     height: auto;
+    border: none;
   }
 
   a {
@@ -29,8 +30,11 @@
       content: ' ';
       @include transition(opacity, .5s, ease);
     }
+  }
 
-    &:hover {
+  &:hover,
+  &.active {
+    a {
       &:before{
         position: absolute;
         opacity: 0.5;

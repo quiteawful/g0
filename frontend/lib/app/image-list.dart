@@ -22,6 +22,11 @@ class ImageList {
   String currentOffset = '';
 
   /**
+   * active element
+   */
+  LIElement active;
+
+  /**
    * Number of images which fit in one screen
    */
   int perPage = 0;
@@ -41,6 +46,17 @@ class ImageList {
       _loadingElement = _imageList.querySelector('.loading');
     }
     window.onResize.listen((_) => _getPerPage());
+    window.onKeyDown.listen((KeyboardEvent evt){
+      switch(evt.keyCode){
+        case 37:
+          prev();
+          break;
+        case 39:
+          next();
+          break;
+      }
+    });
+
   }
 
   /**
@@ -59,7 +75,7 @@ class ImageList {
       currentOffset = data['id'].toString();
 
       //Click event for detail view
-      item.onClick.listen(onImageClick);
+      item.onClick.listen(_onImageClick);
 
       Future delayed = new Future.delayed(
           new Duration(milliseconds: delay),
@@ -129,12 +145,49 @@ class ImageList {
     }
   }
 
-  void onImageClick(Event evt){
+  void _onImageClick(Event evt){
     evt.preventDefault();
     Element target = evt.target;
     if(target is !LIElement){
       target = target.parentNode;
     }
+    _setActive(target);
     detail.show(target);
+  }
+
+  void _setActive(LIElement target){
+    items.forEach((LIElement item){
+      item.classes.remove('active');
+    });
+    target.classes.add('active');
+    active = target;
+  }
+
+  void next(){
+    int index;
+    if(active == null){
+      index = 1;
+    } else {
+      index = items.indexOf(active) + 1;
+    }
+    if(index < items.length){
+      LIElement target = items[index];
+      _setActive(target);
+      detail.show(target);
+    }
+  }
+
+  void prev(){
+    int index;
+    if(active == null){
+      index = 0;
+    } else {
+      index = items.indexOf(active) - 1;
+    }
+    if(index >= 0){
+      LIElement target = items[index];
+      _setActive(target);
+      detail.show(target);
+    }
   }
 }

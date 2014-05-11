@@ -92,7 +92,7 @@ class Detail{
         imageUrl,
         window.location.pathname + '?offset=$id'
     );
-
+    _hideDetail();
     _showCover();
     _showDetail();
   }
