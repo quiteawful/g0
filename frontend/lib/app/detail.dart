@@ -16,6 +16,7 @@ class Detail{
   Element _channel;
   Element _date;
   Element _source;
+  Element _close;
 
   // Image meta
   String id;
@@ -52,10 +53,14 @@ class Detail{
     _date = _footer.querySelector('.date');
     _source = _footer.querySelector('.source');
     _imageContainer = _element.querySelector('.image-container');
+    _close = _element.querySelector('.close');
+
   }
 
   void _eventBindings(){
     _cover.onClick.listen((_) => _hideDetail());
+    _close.onClick.listen((_) => _hideDetail());
+
     window.onResize.listen((_) => _onResize());
     window.onKeyUp.listen(_handleKeys);
   }

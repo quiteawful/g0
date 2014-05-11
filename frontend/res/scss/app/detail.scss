@@ -63,6 +63,26 @@
     }
 
   }
+
+  .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    border: none;
+    margin: 20px;
+    color: white;
+    font-weight: bold;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    opacity: .2;
+    @include transition(opacity, .5s, ease);
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 .cover {
