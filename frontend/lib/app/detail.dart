@@ -26,6 +26,8 @@ class Detail{
   int date;
 
   int _windowWidth;
+  int _windowHeight;
+
   ImageElement _loadedImage;
 
   DateFormat _dateFormat = new DateFormat(G0.DATE_FORMAT);
@@ -63,6 +65,7 @@ class Detail{
    */
   void _onResize(){
     _windowWidth = window.innerWidth;
+    _windowHeight = window.innerHeight;
     _setImageSize();
   }
 
@@ -173,12 +176,25 @@ class Detail{
     int width = origWidth > _windowWidth ? _windowWidth : origWidth;
     double ratio = width / origWidth;
     int height = (origHeight * ratio).ceil();
+
+    //TODO: inject this or move it to config
+    int headerHeight = 60;
+
+    if( height + headerHeight > _windowHeight  ){
+      height = _windowHeight;
+      _element.classes.add('scrollable');
+    } else {
+      _element.classes.remove('scrollable');
+    }
+
     int left = width >= _windowWidth ? 0 : ((_windowWidth - width) / 2).ceil();
+    int top = height >= _windowHeight ? 0 : ((_windowHeight - height) / 2).ceil();
+
 
     _element..style.width = '${width}px'
             ..style.height = '${height}px'
             ..style.left = '${left}px'
-            ..style.top = '120px';
+            ..style.top = '${top}px';
   }
 
   void _handleKeys(KeyboardEvent evt){
