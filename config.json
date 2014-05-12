@@ -1,6 +1,7 @@
 {
     "Imagepath": "/tmp/",
     "Thumbpath": "/tmp/",
+	"DbEnginge": "sqlite3",
     "DbFile": "g0.db",
     "TblImages": "g0_images",
     "Addr": ":31337",

@@ -21,12 +21,28 @@ type Image struct {
 	User      string
 }
 
-var ()
+func ImageInit() (*Image, error) {
+	if Connection == nil {
+		err := Open()
+		if err != nil {
+			log.Printf("Image.Init: %s\n", err.Error())
+			return nil, err
+		}
+		i := new(Image)
+		return i, nil
+	} else {
+		return new(Image), nil
+	}
+}
 
 func (img *Image) Setup() error {
 	// Creates the table inside the databasefile
 	// if the table exists, nothing will be done
-	query := "CREATE TABLE g0_images();"
+	query := "CREATE TABLE IF NOT EXISTS g0_images(id integer not null primary key autoincrement, " +
+		"hash text, name text, thumbnail text, " +
+		"tstamp timestamp default current_timestamp, " +
+		"url text, network text, chan text, user text);"
+
 	_, err := Exec(query)
 	if err != nil {
 		log.Printf("Image.Setup: %s\n", err.Error())

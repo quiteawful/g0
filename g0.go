@@ -12,18 +12,25 @@ import (
 func main() {
 	api := new(Api.Api)
 	bot := new(IrcBot.Bot)
+	db := new(Db.DbConfig)
 
+	// load config structs
 	conf.Fill(api)
 	conf.Fill(bot)
+	conf.Fill(db)
+
+	// init objects
+	Db.Init(db)
+	images := new(Db.Image)
+	err := images.Setup()
+	if err != nil {
+		log.Printf("Main: %s\n", err.Error())
+	}
 
 	go api.Run()
 	go bot.Run()
 
 	bot.LinkChannel = make(chan IrcBot.Link)
-
-	db := new(Db.DbConfig)
-	conf.Fill(db)
-	dbase, _ := Db.NewDb(db.DbFile)
 
 	//hässliche blocking schleife ist hässlich
 	for true {

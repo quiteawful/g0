@@ -1,22 +1,41 @@
 package Db
 
 import (
-	"os"
 	"testing"
 )
 
 func TestNewDb(t *testing.T) {
 
-	testDb, err := NewDb("newDb.db")
+	err := Open()
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer testDb.Close()
-
-	if _, err := os.Stat(testDb.DbFile); os.IsNotExist(err) {
-		t.Fatal("Failed to create database.")
-	}
+	Close()
 }
+
+func TestImageSetup(t *testing.T) {
+	_, err := ImageInit()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+/*
+func TestQuery(t *testing.T) {
+
+	err := Open()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = Query("select 1;")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	Close()
+}
+
 
 func TestNewImage(t *testing.T) {
 	testDb, err := NewDb("newImage.db")
@@ -115,3 +134,4 @@ func TestGetImageCount(t *testing.T) {
 		t.Fatalf("Failed to count images correctly, got %d expected 1\n", c)
 	}
 }
+*/
