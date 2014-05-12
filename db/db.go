@@ -23,7 +23,8 @@ type Db struct {
 }
 
 var (
-	_db *Db = nil // private var of *Db
+	_db   *Db  = nil // private var of *Db
+	debug bool = false
 )
 
 func NewDb() (*Db, error) {
@@ -35,14 +36,14 @@ func NewDb() (*Db, error) {
 	// get config
 	tmpConf := new(DbConfig)
 	conf.Fill(tmpConf)
-	log.Printf("DbEngine: %s\nDbFile: %s\nTblImages: %s\n", tmpConf.DbEngine, tmpConf.DbFile, tmpConf.TblImages)
+
 	// set values from config.json
 	_db.DbEngine = tmpConf.DbEngine
 	_db.DbFile = tmpConf.DbFile
 	_db.DbImageTable = tmpConf.TblImages
 
 	// open connection, and create tables if needed.
-	_db.conn, err = sql.Open(_db.DbEngine, _db.DbFile+":locked.sqlite?chache=shared&mode=rwc")
+	_db.conn, err = sql.Open(_db.DbEngine, _db.DbFile /*+":locked.sqlite?chache=shared&mode=rwc"*/)
 	if err != nil {
 		log.Printf("Db.NewDb: Failed to open %s via driver: %s. Error: %s\n", _db.DbFile, _db.DbEngine, err.Error())
 		return nil, err
@@ -73,6 +74,9 @@ func (db *Db) execute(query string, args ...interface{}) (result sql.Result, err
 		return result, err
 	}
 
+	if debug {
+		log.Printf("Query: (%v) %s\n", &db, query)
+	}
 	result, err = db.conn.Exec(query, args...)
 	if err != nil {
 		log.Printf("Db.execute: %s\n", err.Error())
@@ -87,7 +91,9 @@ func (db *Db) query(query string, args ...interface{}) (result *sql.Rows, err er
 		log.Printf("Db.query: %s\n", err.Error())
 		return result, err
 	}
-
+	if debug {
+		log.Printf("Query: (%v) %s\n", &db, query)
+	}
 	result, err = db.conn.Query(query, args...)
 	if err != nil {
 		log.Printf("Db.query: %s: %s\n", err.Error(), query)

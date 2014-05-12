@@ -42,6 +42,7 @@ func init() {
 	tmpApi := new(Api)
 	conf.Fill(tmpApi)
 	_api.Addr = tmpApi.Addr
+
 }
 
 func NewApi(addr string) (*Api, error) {

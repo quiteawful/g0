@@ -48,8 +48,8 @@ func main() {
 			log.Printf("Main: %s\n", err.Error())
 			continue
 		}
-		if hashcount > 0 {
-			// TODO remove thumbnail.
+		if hashcount > 0 || hashcount == -1 {
+			// TODO remove thumbnail and image
 			continue
 		}
 

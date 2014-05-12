@@ -96,7 +96,7 @@ func (db *Db) GetLatestImages(id, n int) (result []Image, err error) {
 		if idend < 1 { // do not accept negative values in where clause
 			idend = 1
 		}
-		query += " WHERE id <= " + strconv.Itoa(id) + " AND id > " + strconv.Itoa(idend) + " ORDER BY tstamp DESC"
+		query += " WHERE id <= " + strconv.Itoa(id) + " AND id > " + strconv.Itoa(idend) + " ORDER BY tstamp DESC, id DESC"
 
 	} else {
 		query += " ORDER BY id DESC LIMIT 0, " + strconv.Itoa(n)
