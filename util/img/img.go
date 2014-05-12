@@ -8,6 +8,7 @@ package img
 import (
 	"code.google.com/p/graphics-go/graphics"
 	"fmt"
+	"github.com/aimless/g0/conf"
 	"image"
 	_ "image/gif"
 	"image/jpeg"
@@ -16,8 +17,28 @@ import (
 	"os"
 )
 
+var (
+	_img *ConfImg = nil // config holder for package instance
+)
+
+type ConfImg struct {
+	Imagepath string
+	Thumbpath string
+}
+
+func init() {
+	if _img == nil {
+		_img = new(ConfImg)
+	}
+	tmpConf := new(ConfImg)
+	conf.Fill(tmpConf)
+
+	_img.Imagepath = tmpConf.Imagepath
+	_img.Thumbpath = tmpConf.Thumbpath
+}
+
 func GetImageFromFile(f string) (image.Image, error) {
-	fi, ferr := os.Open("/root/images/" + f)
+	fi, ferr := os.Open(_img.Imagepath + f)
 	if ferr != nil {
 		fmt.Println(ferr.Error())
 		return nil, ferr
@@ -52,7 +73,7 @@ func MakeThumbnail(src image.Image, x int, y int) (image.Image, error) {
 }
 
 func SaveImageAsJPG(f string, src image.Image) error {
-	fi, ferr := os.Create("/root/images/" + f)
+	fi, ferr := os.Create(_img.Thumbpath + f) // thumbpath. richtig? oder imgpath?
 	if ferr != nil {
 		fmt.Println(ferr.Error())
 		return ferr

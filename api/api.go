@@ -3,6 +3,7 @@ package Api
 
 import (
 	"errors"
+	"github.com/aimless/g0/conf"
 	"github.com/aimless/g0/db"
 	"github.com/ant0ine/go-json-rest/rest"
 	"log"
@@ -27,6 +28,20 @@ type Image struct {
 
 type Api struct {
 	Addr string
+}
+
+var (
+	_api *Api = nil // singleton api holder
+)
+
+func init() {
+	if _api == nil {
+		_api = new(Api)
+	}
+	// conf foo here
+	tmpApi := new(Api)
+	conf.Fill(tmpApi)
+	_api.Addr = tmpApi.Addr
 }
 
 func NewApi(addr string) (*Api, error) {
@@ -71,7 +86,7 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 		log.Printf("Api.GetIDstuff: %s\n", err.Error())
 	}
 	dbarray, err := dbase.GetLatestImages(imgid, count)
-	log.Printf("Found %s images.", len(dbarray))
+
 	if err != nil {
 		log.Println(err.Error())
 	}

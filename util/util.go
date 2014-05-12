@@ -5,12 +5,33 @@ import (
 	"crypto/md5"
 	"crypto/rand"
 	"fmt"
+	"github.com/aimless/g0/conf"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"regexp"
 )
+
+var (
+	_util *ConfImg = nil
+)
+
+type ConfImg struct {
+	Imagepath string
+	Thumbpath string
+}
+
+func init() {
+	if _util == nil {
+		_util = new(ConfImg)
+	}
+	tmpConf := new(ConfImg)
+	conf.Fill(tmpConf)
+
+	_util.Imagepath = tmpConf.Imagepath
+	_util.Thumbpath = tmpConf.Thumbpath
+}
 
 const MAX_SIZE = 10485760
 
@@ -53,7 +74,7 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 			h := md5.New()
 			h.Write(b)
 			filename = newLenChars(6, StdChars) + "." + urlType[1]
-			ioutil.WriteFile("/root/images/"+filename, b, 0644)
+			ioutil.WriteFile(_util.Imagepath+filename, b, 0644)
 
 			return filename, fmt.Sprintf("%x", h.Sum(nil)), nil
 		}

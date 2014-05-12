@@ -1,6 +1,6 @@
 {
-    "Imagepath": "/tmp/",
-    "Thumbpath": "/tmp/",
+    "Imagepath": "C:\\images\\",
+    "Thumbpath": "C:\\images\\thumbs\\",
 	"DbEngine": "sqlite3",
     "DbFile": "g0.db",
     "TblImages": "g0_images",

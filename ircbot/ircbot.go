@@ -3,6 +3,7 @@ package IrcBot
 import (
 	"crypto/tls"
 	//"errors"
+	"github.com/aimless/g0/conf"
 	"github.com/thoj/go-ircevent"
 	"log"
 	"regexp"
@@ -38,6 +39,21 @@ type Link struct {
 	Network string
 	Channel string
 	Poster  string
+}
+
+var (
+	_bot *Bot = nil
+)
+
+func init() {
+	if _bot == nil {
+		_bot = new(Bot)
+	}
+	tmpBot := new(Bot)
+	conf.Fill(tmpBot)
+	_bot.Nickname = tmpBot.Nickname
+	_bot.Realname = tmpBot.Realname
+	_bot.Connections = tmpBot.Connections
 }
 
 func (b *Bot) Run() {

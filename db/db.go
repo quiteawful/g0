@@ -90,7 +90,7 @@ func (db *Db) query(query string, args ...interface{}) (result *sql.Rows, err er
 
 	result, err = db.conn.Query(query, args...)
 	if err != nil {
-		log.Printf("Db.query: %s\n", err.Error())
+		log.Printf("Db.query: %s: %s\n", err.Error(), query)
 		return result, err
 	}
 
