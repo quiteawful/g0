@@ -20,6 +20,8 @@ class Detail{
   Element _date;
   Element _source;
   Element _close;
+  Element _prev;
+  Element _next;
 
   // Image meta
   String id;
@@ -41,6 +43,7 @@ class Detail{
 
   DateFormat _dateFormat = new DateFormat(G0.DATE_FORMAT);
 
+  //TODO: rename to left/right
   StreamController _onUp = new StreamController.broadcast();
   StreamController _onDown = new StreamController.broadcast();
 
@@ -68,17 +71,23 @@ class Detail{
     _source = _footer.querySelector('.source');
     _imageContainer = _element.querySelector('.image-container');
     _close = _element.querySelector('.close');
+    _next = _element.querySelector('.next');
+    _prev = _element.querySelector('.prev');
+
 
   }
 
   void _eventBindings(){
     _cover.onClick.listen((_) => _hideDetail());
     _close.onClick.listen((_) => _hideDetail());
+    _next.onClick.listen((_) => _onDown.add(true));
+    _prev.onClick.listen((_) => _onUp.add(true));
 
     window.onResize.listen((_) => _onResize());
     window.onKeyUp.listen(_handleKeys);
     window.onMouseWheel.listen(_handleMouseWheel);
     window.onMouseMove.listen(_handleMouseMove);
+
   }
 
   /**

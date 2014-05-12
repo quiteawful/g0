@@ -84,6 +84,30 @@
       opacity: 1;
     }
   }
+
+  .nav {
+    position: fixed;
+    display: block;
+    background: lighten($background-color, 70%);
+    z-index: 220;
+    color: #000000;
+    font-size: 50px;
+    border: none;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 100%;
+    opacity: .05;
+
+    &:hover {
+      opacity: .1;
+    }
+
+    &.next {
+      left: auto;
+      right: 0;
+    }
+  }
 }
 
 .cover {
