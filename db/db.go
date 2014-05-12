@@ -3,76 +3,67 @@ package Db
 import (
 	"database/sql"
 	"errors"
+	"github.com/aimless/g0/conf"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
-	"os"
 )
 
 type DbConfig struct {
+	DbEngine  string
 	DbFile    string
 	TblImages string
 	// Tbl$name for more tables in the database
 }
 type Db struct {
+	DbEngine     string
 	DbFile       string
 	DbImageTable string
 
 	conn *sql.DB
 }
 
-func NewDb(DbFile string) (*Db, error) {
-	var err error
-	if DbFile == "" {
-		return nil, errors.New("empty db DbFile")
-	}
-	_db := &Db{}
-	_db.DbFile = DbFile
-	_db.DbImageTable = "g0_images"
-	_db.conn, err = sql.Open("sqlite3", _db.DbFile)
-	if err != nil {
+var (
+	_db *Db = nil // private var of *Db
+)
 
-		log.Printf("NewDb: Failed to open DbFile. Error: %s\n", err.Error())
+func NewDb() (*Db, error) {
+	var err error
+	// singleton
+	if _db == nil {
+		_db = new(Db)
+	}
+	// get config
+	tmpConf := new(DbConfig)
+	conf.Fill(tmpConf)
+	log.Printf("DbEngine: %s\nDbFile: %s\nTblImages: %s\n", tmpConf.DbEngine, tmpConf.DbFile, tmpConf.TblImages)
+	// set values from config.json
+	_db.DbEngine = tmpConf.DbEngine
+	_db.DbFile = tmpConf.DbFile
+	_db.DbImageTable = tmpConf.TblImages
+
+	// open connection, and create tables if needed.
+	_db.conn, err = sql.Open(_db.DbEngine, _db.DbFile)
+	if err != nil {
+		log.Printf("Db.NewDb: Failed to open %s via driver: %s. Error: %s\n", _db.DbFile, _db.DbEngine, err.Error())
 		return nil, err
 	}
-	if _, err = os.Stat(_db.DbFile); os.IsNotExist(err) {
-		// db file does not exist, create new
-		sql := "create table " + _db.DbImageTable + "(" +
-			"id integer not null primary key autoincrement, " +
-			"hash text, " +
-			"name text, " +
-			"thumbnail text, " +
-			"tstamp timestamp default current_timestamp, " +
-			"url text, " +
-			"network text, " +
-			"chan text, " +
-			"user text" +
-			")"
-		_, err = _db.Exec(sql)
-		if err != nil {
-			log.Printf("NewDb: Failed to execute query: %s Error:%s\n", sql, err.Error())
-			return nil, err
-		}
+	result, err := _db.tblImagesSetup() // setup image table
+	if err != nil {
+		log.Printf("Db.NewDb: %s\n", err.Error())
+		return nil, err
 	}
+	if result != true {
+		err = errors.New("Could not create table " + _db.DbImageTable)
+		log.Printf("Db.NewDb: %s\n", err.Error())
+		return nil, err
+	}
+
+	// setup other tables if needed.
 	return _db, nil
 }
 
 func (db *Db) Close() {
 	db.conn.Close()
-}
-
-func (db *Db) Exec(query string) (sql.Result, error) {
-	var err error
-	if query == "" {
-		err = errors.New("Empty query")
-		log.Printf("Exec: Error:%s\n", err.Error())
-		return nil, err
-	}
-	result, err := db.conn.Exec(query)
-	if err != nil {
-		log.Printf("Exec: Failed to execute query: %s Error:%s\n", query, err.Error())
-		return nil, err
-	}
-	return result, nil
 }
 
 func (db *Db) execute(query string, args ...interface{}) (result sql.Result, err error) {
@@ -87,5 +78,21 @@ func (db *Db) execute(query string, args ...interface{}) (result sql.Result, err
 		log.Printf("Db.execute: %s\n", err.Error())
 		return result, err
 	}
+	return result, nil
+}
+
+func (db *Db) query(query string, args ...interface{}) (result *sql.Rows, err error) {
+	if query == "" {
+		err = errors.New("Empty query")
+		log.Printf("Db.query: %s\n", err.Error())
+		return result, err
+	}
+
+	result, err = db.conn.Query(query, args...)
+	if err != nil {
+		log.Printf("Db.query: %s\n", err.Error())
+		return result, err
+	}
+
 	return result, nil
 }

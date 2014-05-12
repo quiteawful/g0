@@ -7,7 +7,7 @@ import (
 
 func TestNewDb(t *testing.T) {
 
-	testDb, err := NewDb("newDb.db")
+	testDb, err := NewDb()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -19,7 +19,7 @@ func TestNewDb(t *testing.T) {
 }
 
 func TestNewImage(t *testing.T) {
-	testDb, err := NewDb("newImage.db")
+	testDb, err := NewDb()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,7 +31,7 @@ func TestNewImage(t *testing.T) {
 }
 
 func TestGetImage(t *testing.T) {
-	testDb, err := NewDb("getImage.db")
+	testDb, err := NewDb()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func TestGetImage(t *testing.T) {
 }
 
 func TestGetImages(t *testing.T) {
-	testDb, err := NewDb("newImages.db")
+	testDb, err := NewDb()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,7 +80,7 @@ func TestGetImages(t *testing.T) {
 
 func TestDeleteImage(t *testing.T) {
 	os.Remove("deleteImage.db")
-	testDb, err := NewDb("deleteImage.db")
+	testDb, err := NewDb()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -97,7 +97,7 @@ func TestDeleteImage(t *testing.T) {
 
 func TestGetImageCount(t *testing.T) {
 	os.Remove("getImageCount.db")
-	testDb, err := NewDb("getImageCount.db")
+	testDb, err := NewDb()
 	if err != nil {
 		t.Fatal(err)
 	}

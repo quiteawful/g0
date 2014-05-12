@@ -22,101 +22,92 @@ type Image struct {
 }
 
 func (db *Db) tblImagesSetup() (bool, error) {
-	/*sql := "create table " + db.DbImageTable + "(" +
-	"id integer not null primary key autoincrement, " +
-	"hash text, " +
-	"name text, " +
-	"thumbnail text, " +
-	"tstamp timestamp default current_timestamp, " +
-	"url text, " +
-	"network text, " +
-	"chan text, " +
-	"user text" +
-	")"*/
+	query := "CREATE TABLE IF NOT EXISTS " + db.DbImageTable + "(" +
+		"id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, hash TEXT, " +
+		"name TEXT, thumbnail TEXT, " +
+		"tstamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, url TEXT, " +
+		"network TEXT, chan TEXT, user TEXT);"
+
+	_, err := db.execute(query)
+	if err != nil {
+		log.Printf("db.tblImagesSetup: %s\n", err.Error())
+		return false, err
+	}
 	return true, nil
 }
 
-func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string) (int64, error) {
-	var err error
+func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string) (id int64, err error) {
 	if name == "" {
 		err = errors.New("Empty filename")
 		log.Printf("NewImage: %s\n", err.Error())
 		return 0, err
 	}
 
-	query := "insert into " + db.DbImageTable + "(hash, name, thumbnail, url, network, chan, user) values('" +
-		hash + "', '" +
-		name + "', '" +
-		thumbnail + "', '" +
-		url + "', '" +
-		network + "', '" +
-		channel + "', '" +
-		user + "');"
+	query := "INSERT INTO " + db.DbImageTable + "(hash, name, thumbnail, url, network, chan, user) " +
+		"values(?, ?, ?, ?, ?, ?, ?)"
 
-	result, err := db.Exec(query)
+	result, err := db.execute(query, hash, name, thumbnail, url, network, channel, user)
 	if err != nil {
-		log.Printf("NewImage: %s\n", err.Error())
+		log.Printf("Db.NewImage: %s\n", err.Error())
 		return 0, err
 	}
-	id, _ := result.LastInsertId()
+	id, err = result.LastInsertId()
+	if err != nil {
+		log.Printf("Db.NewImage: %s\n", err.Error())
+		return id, err
+	}
 	return id, nil
 }
 
-func (db *Db) GetImage(id int) (Image, error) {
-	var err error
+func (db *Db) GetImage(id int) (result Image, err error) {
 	if id < 1 {
 		err = errors.New("No id found.")
 		log.Printf("GetImage: %s\n", err.Error())
 		return Image{}, err
 	}
 
-	query := "select * from " + db.DbImageTable + " where id = ?"
-	row := db.conn.QueryRow(query, id)
+	query := "SELECT * FROM " + db.DbImageTable + " WHERE id = ?;"
+	rows, err := db.query(query, id)
 
-	result := Image{}
-	err = row.Scan(
-		&result.Id,
-		&result.Hash,
-		&result.Name,
-		&result.Thumbnail,
-		&result.Timestamp,
-		&result.Url,
-		&result.Network,
-		&result.Channel,
-		&result.User)
+	if err != nil {
+		log.Printf("Db.GetImage: %s\n", err.Error())
+		return result, err
+	}
+	rows.Next() // no loop, only first result
+	err = rows.Scan(&result.Id, &result.Hash, &result.Name, &result.Thumbnail,
+		&result.Timestamp, &result.Url, &result.Network, &result.Channel, &result.Url)
 
+	if err != nil {
+		log.Printf("Db.GetImage: %s\n", err.Error())
+		return result, err
+	}
 	if err == sql.ErrNoRows {
 		err = errors.New("Query returned zero rows.")
-		log.Printf("GetImage: %s %s\n", err.Error(), query)
-		return Image{}, err
+		log.Printf("Db.GetImage: %s\n", err.Error())
+		return result, err
 	}
-
 	return result, nil
 }
 
-func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
-	var query string
-
-	log.Printf("Parameter: id=%v, n=%v\n", id, n)
+func (db *Db) GetLatestImages(id, n int) (result []Image, err error) {
+	var query string = "SELECT * FROM " + db.DbImageTable
 	if id > 0 {
 		idend := id - n
 		if idend < 1 { // do not accept negative values in where clause
 			idend = 1
 		}
-		query = "select * from " + db.DbImageTable + " where id <= " + strconv.Itoa(id) + " and id > " + strconv.Itoa(idend) + " order by tstamp desc"
+		query = " WHERE id <= " + strconv.Itoa(id) + " AND id > " + strconv.Itoa(idend) + " ORDER BY tstamp DESC"
 
 	} else {
-		query = "select * from " + db.DbImageTable + " order by id desc limit 0, " + strconv.Itoa(n)
+		query = " ORDER BY id DESC LIMIT 0, " + strconv.Itoa(n)
 	}
 
-	log.Printf("Sql-query: %s\n", query)
-	rows, err := db.conn.Query(query)
+	rows, err := db.query(query)
 	if err != nil {
-		log.Printf("GetImages: %s\n", err)
+		log.Printf("Db.GetImages: %s\n", err)
 		return nil, err
 	}
 
-	var result []Image
 	for rows.Next() {
 		img := Image{}
 		err = rows.Scan(
@@ -131,7 +122,7 @@ func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
 			&img.User)
 
 		if err != nil {
-			log.Printf("GetImages: %s\n", err)
+			log.Printf("Db.GetImages: %s\n", err)
 			return nil, err
 		}
 
@@ -140,27 +131,25 @@ func (db *Db) GetLatestImages(id, n int) ([]Image, error) {
 	return result, nil
 }
 
-func (db *Db) GetImages(start, offset int) ([]Image, error) {
-	var err error
-	if start < 1 {
-		err = errors.New("Start id too low.")
-		log.Printf("GetImages: %s\n", err)
-		return nil, err
-	}
+func (db *Db) GetImages(offset, n int) (result []Image, err error) {
 	if offset < 1 {
+		err = errors.New("Start id too low.")
+		log.Printf("Db.GetImages: %s\n", err)
+		return nil, err
+	}
+	if n < 1 {
 		err = errors.New("Offset too low.")
-		log.Printf("GetImages: %s\n", err)
+		log.Printf("Db.GetImages: %s\n", err)
 		return nil, err
 	}
 
-	query := "select * from " + db.DbImageTable + " where id >= ? and id < ?"
-	rows, err := db.conn.Query(query, start, (start + offset))
+	query := "SELECT * FROM " + db.DbImageTable + " WHERE id >= ? AND id < ?"
+	rows, err := db.query(query, offset, (offset + n))
 	if err != nil {
-		log.Printf("GetImages: %s\n", err)
+		log.Printf("Db.GetImages: %s\n", err)
 		return nil, err
 	}
 
-	var result []Image
 	for rows.Next() {
 		img := Image{}
 		err = rows.Scan(
@@ -175,7 +164,7 @@ func (db *Db) GetImages(start, offset int) ([]Image, error) {
 			&img.User)
 
 		if err != nil {
-			log.Printf("GetImages: %s\n", err)
+			log.Printf("Db.GetImages: %s\n", err)
 			return nil, err
 		}
 
@@ -190,11 +179,15 @@ func (db *Db) DeleteImage(id int) bool {
 		return false
 	}
 
-	query := "delete from " + db.DbImageTable + " where id = ?"
-	result, err := db.conn.Exec(query, id)
+	query := "DELETE FROM " + db.DbImageTable + " WHERE id = ?"
+	result, err := db.execute(query, id)
+	if err != nil {
+		log.Printf("Db.DeleteImage: %s\n", err.Error())
+		return false
+	}
 	affected, err := result.RowsAffected()
 	if err != nil {
-		log.Printf("DeleteImage: %s\n", err.Error())
+		log.Printf("Db.DeleteImage: %s\n", err.Error())
 		return false
 	}
 	if affected != 1 {
@@ -203,15 +196,40 @@ func (db *Db) DeleteImage(id int) bool {
 	return true
 }
 
-func (db *Db) GetImageCount() (int, error) {
-	query := "select count(*) from " + db.DbImageTable
-	row := db.conn.QueryRow(query)
-	var c int
-	err := row.Scan(&c)
+func (db *Db) GetImageCount() (c int, err error) {
+	query := "SELECT count(*) FROM " + db.DbImageTable
+	rows, err := db.query(query)
+	if err != nil {
+		log.Printf("Db.GetImageCount: %s\n", err.Error())
+		return 0, err
+	}
+	rows.Next()
+	err = rows.Scan(&c)
+
 	if err == sql.ErrNoRows {
 		err = errors.New("Query returned zero rows.")
-		log.Printf("GetImageCount: %s %s\n", err.Error(), query)
+		log.Printf("Db.GetImageCount: %s %s\n", err.Error(), query)
 		return 0, err
 	}
 	return c, nil
+}
+
+func (db *Db) GetHashCount(hash string) (c int, err error) {
+	query := "SELECT count(*) FROM " + db.DbImageTable + " WHERE hash = ?"
+	rows, err := db.query(query, hash)
+	if err != nil {
+		log.Printf("Db.GetHashCount: %s\n", err.Error())
+		return -1, err
+	}
+	rows.Next()
+	err = rows.Scan(&c)
+
+	if err == sql.ErrNoRows {
+		err = errors.New("Query returned zero rows.")
+		log.Printf("Db.GetHashCount: %s\n", err.Error())
+		return -1, err
+	}
+
+	return c, nil
+
 }

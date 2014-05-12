@@ -13,6 +13,7 @@ import (
 func main() {
 	api := new(Api.Api)
 	bot := new(IrcBot.Bot)
+	dbase, _ := Db.NewDb()
 
 	conf.Fill(api)
 	conf.Fill(bot)
@@ -21,10 +22,6 @@ func main() {
 	go bot.Run()
 
 	bot.LinkChannel = make(chan IrcBot.Link)
-
-	db := new(Db.DbConfig)
-	conf.Fill(db)
-	dbase, _ := Db.NewDb(db.DbFile)
 
 	//hässliche blocking schleife ist hässlich
 	for true {

@@ -66,7 +66,7 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "NYAN not found", 405)
 		return
 	}
-	dbase, err := Db.NewDb("g0.db")
+	dbase, err := Db.NewDb()
 	if err != nil {
 		log.Printf("Api.GetIDstuff: %s\n", err.Error())
 	}
