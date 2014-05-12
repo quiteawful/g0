@@ -35,8 +35,14 @@ func main() {
 			continue
 		}
 
-		imgbytes, _ := img.GetImageFromFile(f)
-		thmb, _ := img.MakeThumbnail(imgbytes, 150, 150)
+		imgbytes, err := img.GetImageFromFile(f)
+		if err != nil {
+			log.Printf("Main: %s\n", err.Error())
+		}
+		thmb, err := img.MakeThumbnail(imgbytes, 150, 150)
+		if err != nil {
+			log.Printf("Main: %s\n", err.Error())
+		}
 		img.SaveImageAsJPG("thumb-"+f, thmb)
 
 		dbase.NewImage(hash, f, "thumb-"+f, link.URL, link.Network, link.Channel, link.Poster)

@@ -66,8 +66,12 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 		rest.Error(w, "NYAN not found", 405)
 		return
 	}
-	dbase, _ := Db.NewDb("g0.db")
+	dbase, err := Db.NewDb("g0.db")
+	if err != nil {
+		log.Printf("Api.GetIDstuff: %s\n", err.Error())
+	}
 	dbarray, err := dbase.GetLatestImages(imgid, count)
+	log.Printf("Found %s images.", len(dbarray))
 	if err != nil {
 		log.Println(err.Error())
 	}
