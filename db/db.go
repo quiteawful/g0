@@ -42,7 +42,7 @@ func NewDb() (*Db, error) {
 	_db.DbImageTable = tmpConf.TblImages
 
 	// open connection, and create tables if needed.
-	_db.conn, err = sql.Open(_db.DbEngine, _db.DbFile)
+	_db.conn, err = sql.Open(_db.DbEngine, _db.DbFile+":locked.sqlite?chache=shared&mode=rwc")
 	if err != nil {
 		log.Printf("Db.NewDb: Failed to open %s via driver: %s. Error: %s\n", _db.DbFile, _db.DbEngine, err.Error())
 		return nil, err

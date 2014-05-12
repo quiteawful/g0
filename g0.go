@@ -42,6 +42,17 @@ func main() {
 		}
 		img.SaveImageAsJPG("thumb-"+f, thmb)
 
+		// check if the imagehash is already in the database
+		hashcount, err := dbase.GetHashCount(hash)
+		if err != nil {
+			log.Printf("Main: %s\n", err.Error())
+			continue
+		}
+		if hashcount > 0 {
+			// TODO remove thumbnail.
+			continue
+		}
+
 		dbase.NewImage(hash, f, "thumb-"+f, link.URL, link.Network, link.Channel, link.Poster)
 	}
 }
