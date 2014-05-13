@@ -143,16 +143,18 @@ class Detail{
   }
 
   void _showDetail(){
-    _spinner.classes.add('show');
-    _element.classes.add('show');
-    _footer.classes.add('show');
-    _body.classes.add('detail-open');
-    _isShown = true;
+    if(!_isShown){
+      _element.classes.add('show');
+      _spinner.classes.add('show');
+      _footer.classes.add('show');
+      _body.classes.add('detail-open');
+      _isShown = true;
+    }
   }
 
   void _hideDetail(){
-    _spinner.classes.remove('show');
     _element.classes.remove('show');
+    _spinner.classes.remove('show');
     _footer.classes.remove('show');
     _body.classes.remove('detail-open');
 
