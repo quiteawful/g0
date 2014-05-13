@@ -63,8 +63,8 @@ class ImageList {
       }
     });
 
-    detail.onUp.listen((_) => prev());
-    detail.onDown.listen((_) => next());
+    detail.onLeft.listen((_) => prev());
+    detail.onRight.listen((_) => next());
   }
 
   /**
