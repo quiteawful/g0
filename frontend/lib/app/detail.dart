@@ -213,8 +213,9 @@ class Detail{
 
     //TODO: inject this or move it to config
     int headerHeight = 60;
+    int footerHeight = 120;
 
-    if( height + headerHeight > _windowHeight  ){
+    if( height + headerHeight + footerHeight > _windowHeight  ){
       height = _windowHeight;
       _element.classes.add('scrollable');
     } else {
