@@ -106,3 +106,7 @@ func newLenChars(length int, chars []byte) string {
 	}
 	panic("unreachable")
 }
+
+func IsDirWriteable(path string) bool {
+	return false
+}
