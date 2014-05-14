@@ -63,6 +63,10 @@ class G0 {
    * Initializes [centeredFloatList] on first call.
    */
   Future _loadImages(String offset, int count){
+    if(imageList.isFinished){
+      return null;
+    }
+
     Completer completer = new Completer();
     imageList.showLoading();
     Future<Map> future = api.getImages(offset: offset, count: count);

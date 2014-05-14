@@ -14,7 +14,15 @@ class ImageList {
 
   Detail detail = new Detail();
 
+  /**
+   * hostname backup
+   */
   String host = window.location.hostname;
+
+  /**
+   * this is true if all images are received
+   */
+  bool isFinished = false;
 
   /**
    * id of last loaded image
@@ -34,6 +42,7 @@ class ImageList {
 
   String _imageSrc;
   String _thumbSrc;
+
 
   /**
    * Stores all loaded items
@@ -72,10 +81,16 @@ class ImageList {
    * an appends them to [_imageList]
    */
   void showImages(Map data){
+    if(data['images'] == null){
+      isFinished = true;
+      return;
+    }
+
     _imageSrc = data['image-src'];
     _thumbSrc = data['thumb-src'];
 
     int delay = 0;
+
     data['images'].forEach((data){
       Element item = createItem(data);
       _imageList.append(item);
