@@ -215,19 +215,19 @@ func (db *Db) GetImageCount() (c int, err error) {
 }
 
 func (db *Db) GetHashCount(hash string) (c int, err error) {
-	query := "SELECT count(*) FROM " + db.DbImageTable + " WHERE hash = ?"
+	query := "SELECT count(*) AS c FROM " + db.DbImageTable + " WHERE hash = ?"
 	rows, err := db.query(query, hash)
 	if err != nil {
 		log.Printf("Db.GetHashCount: %s\n", err.Error())
 		return -1, err
 	}
-	rows.Next()
-	err = rows.Scan(&c)
 
-	if err == sql.ErrNoRows {
-		err = errors.New("Query returned zero rows.")
-		log.Printf("Db.GetHashCount: %s\n", err.Error())
-		return -1, err
+	for rows.Next() {
+		err = rows.Scan(&c)
+		if err != nil {
+			log.Printf("Db.GetHashCount: %s\n", err.Error())
+			return -1, err
+		}
 	}
 
 	return c, nil

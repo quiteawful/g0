@@ -24,7 +24,7 @@ type Db struct {
 
 var (
 	_db   *Db  = nil // private var of *Db
-	debug bool = false
+	debug bool = true
 )
 
 func NewDb() (*Db, error) {
