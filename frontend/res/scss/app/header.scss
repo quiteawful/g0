@@ -6,11 +6,20 @@
   z-index: 300;
   background-color: $background-color;
   height: 60px;
+  border-bottom: 1px solid $border-color;
+  border-top: 3px solid $link-color;
+  @include box-shadow(0, 5px, 25px, black);
+
 
   h1 {
     margin: 0;
     padding: 0;
+    font-family: impact;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 30px;
+    line-height: 36px;
   }
 
-  border-bottom: 1px solid $border-color;
 }

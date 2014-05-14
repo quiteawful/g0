@@ -15,10 +15,13 @@ body {
   margin: 0;
   padding: 0;
   color: $text-color;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 13px;
+  line-height: 20px;
 }
 
 body {
-  background: $background-color;
+  background: darken($background-color, 3%);
 
   &.detail-open {
     overflow: hidden;
