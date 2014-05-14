@@ -11,7 +11,8 @@
         {
             "Address": "tardis.nerdlife.de:6697",
             "Channels": [
-                "#g0"
+                "#g0",
+				"#rumkugel"
             ]
         }
     ]
