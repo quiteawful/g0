@@ -36,19 +36,16 @@ class Detail{
 
   ImageElement _loadedImage;
 
-  Point<int> _mousePos;
-
   bool _isShown = false;
   bool get isShown => _isShown;
 
   DateFormat _dateFormat = new DateFormat(G0.DATE_FORMAT);
 
-  //TODO: rename to left/right
-  StreamController _onUp = new StreamController.broadcast();
-  StreamController _onDown = new StreamController.broadcast();
+  StreamController _onLeft = new StreamController.broadcast();
+  StreamController _onRight = new StreamController.broadcast();
 
-  Stream get onUp => _onUp.stream;
-  Stream get onDown => _onDown.stream;
+  Stream get onLeft => _onLeft.stream;
+  Stream get onRight => _onRight.stream;
 
   Detail(){
     _getElements();
@@ -80,14 +77,11 @@ class Detail{
   void _eventBindings(){
     _cover.onClick.listen((_) => _hideDetail());
     _close.onClick.listen((_) => _hideDetail());
-    _next.onClick.listen((_) => _onDown.add(true));
-    _prev.onClick.listen((_) => _onUp.add(true));
+    _next.onClick.listen((_) => _onRight.add(true));
+    _prev.onClick.listen((_) => _onLeft.add(true));
 
     window.onResize.listen((_) => _onResize());
     window.onKeyUp.listen(_handleKeys);
-    window.onMouseWheel.listen(_handleMouseWheel);
-    window.onMouseMove.listen(_handleMouseMove);
-
   }
 
   /**
@@ -149,16 +143,18 @@ class Detail{
   }
 
   void _showDetail(){
-    _spinner.classes.add('show');
-    _element.classes.add('show');
-    _footer.classes.add('show');
-    _body.classes.add('detail-open');
-    _isShown = true;
+    if(!_isShown){
+      _element.classes.add('show');
+      _spinner.classes.add('show');
+      _footer.classes.add('show');
+      _body.classes.add('detail-open');
+      _isShown = true;
+    }
   }
 
   void _hideDetail(){
-    _spinner.classes.remove('show');
     _element.classes.remove('show');
+    _spinner.classes.remove('show');
     _footer.classes.remove('show');
     _body.classes.remove('detail-open');
 
@@ -217,8 +213,9 @@ class Detail{
 
     //TODO: inject this or move it to config
     int headerHeight = 60;
+    int footerHeight = 120;
 
-    if( height + headerHeight > _windowHeight  ){
+    if( height + headerHeight + footerHeight > _windowHeight  ){
       height = _windowHeight;
       _element.classes.add('scrollable');
     } else {
@@ -241,38 +238,5 @@ class Detail{
         _hideDetail();
         break;
     }
-  }
-
-  void _handleMouseMove(MouseEvent evt){
-    _mousePos = new Point<int>(evt.client.x, evt.client.y);
-  }
-
-  void _handleMouseWheel(WheelEvent evt){
-    if(_stopwatch.elapsedMilliseconds > _scrollDelay
-        && _isShown && !_isMouseOnDetail()
-    ){
-      _stopwatch.reset();
-      if(evt.deltaY > 0){
-        _onDown.add(true);
-      } else if (evt.deltaY < 0){
-        _onUp.add(true);
-      }
-    }
-  }
-
-  /**
-   * Detects if mouse is over detail view.
-   * TODO: read padding and remove hardcoded value
-   */
-  bool _isMouseOnDetail(){
-    if(_mousePos != null
-      && _mousePos.x > _element.offsetLeft + 20
-      && _mousePos.x < _element.offsetLeft + _element.offset.width - 20
-      && _mousePos.y > _element.offsetTop + 20
-      && _mousePos.y < _element.offsetTop + _element.offset.height - 20
-    ){
-      return true;
-    }
-    return false;
   }
 }

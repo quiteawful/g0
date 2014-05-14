@@ -63,8 +63,8 @@ class ImageList {
       }
     });
 
-    detail.onUp.listen((_) => prev());
-    detail.onDown.listen((_) => next());
+    detail.onLeft.listen((_) => prev());
+    detail.onRight.listen((_) => next());
   }
 
   /**
@@ -164,10 +164,13 @@ class ImageList {
   }
 
   void _setActive(LIElement target){
+    //TODO: find a way to change active without flickering detail
+    /*
     items.forEach((LIElement item){
       item.classes.remove('active');
     });
     target.classes.add('active');
+    */
     active = target;
   }
 

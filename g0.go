@@ -36,12 +36,6 @@ func main() {
 		if err != nil {
 			log.Printf("Main: %s\n", err.Error())
 		}
-		thmb, err := img.MakeThumbnail(imgbytes, 150, 150)
-		if err != nil {
-			log.Printf("Main: %s\n", err.Error())
-		}
-		img.SaveImageAsJPG("thumb-"+f, thmb)
-
 		// check if the imagehash is already in the database
 		hashcount, err := dbase.GetHashCount(hash)
 		if err != nil {
@@ -52,6 +46,11 @@ func main() {
 			// TODO remove thumbnail and image
 			continue
 		}
+		thmb, err := img.MakeThumbnail(imgbytes, 150, 150)
+		if err != nil {
+			log.Printf("Main: %s\n", err.Error())
+		}
+		img.SaveImageAsJPG("thumb-"+f, thmb)
 
 		dbase.NewImage(hash, f, "thumb-"+f, link.URL, link.Network, link.Channel, link.Poster)
 	}
