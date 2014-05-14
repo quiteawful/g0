@@ -7,11 +7,14 @@ class InfinteLoad {
 
   Element _target;
   int _loadOffset;
+  int _loadDelay;
 
   int _windowHeight;
   int _scrollY = 0;
   int _targetOffset;
   int _targetHeight;
+
+  Stopwatch _stopwatch = new Stopwatch()..start();
 
   /**
    * Event gehts only fired when this is true.
@@ -26,11 +29,13 @@ class InfinteLoad {
    * [loadOffset] defines scroll offset. This is used to fire event before
    * we reache en of window
    */
-  InfinteLoad(this._target, {int loadOffset: 150}){
+  InfinteLoad(this._target, {int loadOffset: 150, int loadDelay: 300}){
       if(_target == null){
         return;
       }
       this._loadOffset = loadOffset;
+      this._loadDelay = loadDelay;
+
       _windowHeight = window.innerHeight;
       updateTargetHeight();
 
@@ -43,7 +48,11 @@ class InfinteLoad {
    */
   void onScroll(Event evt){
     _scrollY = window.scrollY;
+    if(_stopwatch.elapsedMilliseconds < _loadDelay){
+      return;
+    }
 
+    _stopwatch.reset();
     if(_scrollY + _windowHeight >= _targetHeight + _targetOffset - _loadOffset){
       if(isActivated){
         _onFire.add(true);

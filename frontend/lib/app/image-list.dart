@@ -148,7 +148,6 @@ class ImageList {
                    * (_pageHeight / _imageHeight).ceil();
 
     if(newPerPage != perPage){
-      print('change to $newPerPage images per page');
       perPage = newPerPage;
     }
   }

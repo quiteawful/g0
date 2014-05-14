@@ -11,15 +11,12 @@ G0 go;
 void main() {
 
   loadConfig('config.json').then((Map config) {
-    //Api api = new FixtureApi();
-    Api api = new LiveApi(config['api'], config['reload-delay']);
-
     String query = window.location.search;
     Map queryData = QueryString.parse(query);
     String offset = queryData['offset'];
 
     Element container = querySelector('#container');
-    go = new G0(container, api, offset: offset);
+    go = new G0(container, config, offset: offset);
 
     },
     onError: (error) => print(

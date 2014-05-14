@@ -24,19 +24,26 @@ class G0 {
   CenteredFloatList centeredFloatList;
   ImageList imageList;
   InfinteLoad infiniteLoad;
+  Map config;
 
   /**
    * Initializes [G0] on [container] and loads first page from [api]
    * Named parameter [offset] is used for direkt linking
    */
-  G0(this.container, this.api, {offset: null}){
+  G0(this.container, this.config, {offset: null}){
     if(container == null){
       return;
     }
+    api = new LiveApi(config['api']);
+
     Element imageListElement = container.querySelector('.image-list');
     imageList = new ImageList(imageListElement, 150, 150);
     centeredFloatList = new CenteredFloatList(imageListElement);
-    infiniteLoad = new InfinteLoad(imageListElement);
+    infiniteLoad = new InfinteLoad(
+        imageListElement,
+        loadDelay: config['reload-delay']
+    );
+
     _loadImages(offset, imageList.perPage).then((_){
       if(offset != null){
         imageList.detail.showByOffset(offset);
