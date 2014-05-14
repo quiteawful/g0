@@ -70,8 +70,6 @@ class Detail{
     _close = _element.querySelector('.close');
     _next = _element.querySelector('.next');
     _prev = _element.querySelector('.prev');
-
-
   }
 
   void _eventBindings(){
@@ -98,6 +96,7 @@ class Detail{
    * singe image
    */
   void show(LIElement target){
+    _close.classes.remove('show');
     _imageContainer.innerHtml = '';
     _retrieveImageMeta(target);
 
@@ -143,9 +142,9 @@ class Detail{
   }
 
   void _showDetail(){
+    _spinner.classes.add('show');
     if(!_isShown){
       _element.classes.add('show');
-      _spinner.classes.add('show');
       _footer.classes.add('show');
       _body.classes.add('detail-open');
       _isShown = true;
@@ -195,6 +194,7 @@ class Detail{
     _setImageSize();
     _imageContainer.append(_loadedImage);
     _spinner.classes.remove('show');
+    _close.classes.add('show');
   }
 
   /**
