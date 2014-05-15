@@ -201,7 +201,10 @@ class Detail{
    * Calculate and apply optimal image size
    */
   void _setImageSize(){
-    if(_loadedImage == null){
+    if(_loadedImage == null
+      || _loadedImage.dataset['width'] == null
+      || _loadedImage.dataset['height'] == null
+    ){
       return;
     }
     int origWidth = int.parse(_loadedImage.dataset['width']);
