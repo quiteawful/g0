@@ -10,6 +10,10 @@
   border-top: 3px solid $link-color;
   @include box-shadow(0, 5px, 25px, black);
 
+  @media (max-width: 380px) {
+    padding: 10px 20px;
+  }
+
 
   h1 {
     margin: 0;
@@ -20,6 +24,10 @@
     letter-spacing: 2px;
     font-size: 30px;
     line-height: 36px;
+
+    @media (max-width: 380px) {
+      font-size: 20px;
+    }
 
     .beta {
       font-size: 20px;
