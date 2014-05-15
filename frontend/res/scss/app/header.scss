@@ -20,6 +20,11 @@
     letter-spacing: 2px;
     font-size: 30px;
     line-height: 36px;
+
+    a {
+      color: $text-color;
+      text-decoration: none;
+    }
   }
 
 }
