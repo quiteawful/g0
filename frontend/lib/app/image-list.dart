@@ -27,7 +27,7 @@ class ImageList {
   /**
    * id of last loaded image
    */
-  String currentOffset = '';
+  int currentOffset = 0;
 
   /**
    * active element
@@ -95,7 +95,7 @@ class ImageList {
       Element item = createItem(data);
       _imageList.append(item);
       items.add(item);
-      currentOffset = data['id'].toString();
+      currentOffset = int.parse(data['id']);
 
       //Click event for detail view
       item.onClick.listen(_onImageClick);

@@ -6,10 +6,10 @@ class LiveApi implements Api {
 
   LiveApi(this._host);
 
-  Future<Map> getImages({String offset: '0', int count: 20}){
+  Future<Map> getImages({int offset: 0, int count: 20}){
 
     if(offset == null || offset == ''){
-      offset = '0';
+      offset = 0;
     }
 
     String url = '${_host}/${offset}/${count}';
