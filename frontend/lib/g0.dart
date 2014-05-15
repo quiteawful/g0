@@ -44,7 +44,13 @@ class G0 {
         loadDelay: config['reload-delay']
     );
 
-    _loadImages(offset, imageList.perPage).then((_){
+    //TODO: find a better way to display image by offset
+    int request = offset != null ? int.parse(offset): 0;
+    if(request != 0){
+      request++;
+    }
+
+    _loadImages(request, imageList.perPage).then((_){
       if(offset != null){
         imageList.detail.showByOffset(offset);
       }
@@ -61,7 +67,7 @@ class G0 {
    * Displays images after [api] call is finished.
    * Initializes [centeredFloatList] on first call.
    */
-  Future _loadImages(String offset, int count){
+  Future _loadImages(int offset, int count){
     if(imageList.isFinished){
       return null;
     }
