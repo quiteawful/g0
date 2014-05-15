@@ -97,12 +97,12 @@
     background: transparent;
     z-index: 220;
     color: #000000;
-    font-size: 50px;
+    font-size: 40px;
     border: none;
     top: 50%;
     left: 0;
     opacity: 0.5;
-    margin-top: -50px;
+    margin-top: -40px;
 
     &:hover {
       opacity: 1;
@@ -117,17 +117,17 @@
       right: 0;
       width: 0;
       height: 0;
-      border-top: 50px solid transparent;
-      border-bottom: 50px solid transparent;
-      border-left: 50px solid $link-color;
+      border-top: 40px solid transparent;
+      border-bottom: 40px solid transparent;
+      border-left: 40px solid $link-color;
     }
 
     &.prev {
       width: 0;
       height: 0;
-      border-top: 50px solid transparent;
-      border-bottom: 50px solid transparent;
-      border-right: 50px solid $link-color;}
+      border-top: 40px solid transparent;
+      border-bottom: 40px solid transparent;
+      border-right: 40px solid $link-color;}
   }
 }
 
