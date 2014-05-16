@@ -29,3 +29,16 @@ func TestImgurGetImagesFromGallery(t *testing.T) {
 	}
 
 }
+
+func TestImgurGetImagesFromAlbum(t *testing.T) {
+	var id string = "MjR2s" // 1sXiY zH9qXSg
+	fmt.Println("Test: " + id)
+	links, err := ImgurGetImagesFromAlbum(id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("Found: %v links.\n", len(links))
+	for _, s := range links {
+		fmt.Println(s)
+	}
+}
