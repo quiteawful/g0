@@ -42,3 +42,11 @@ func TestImgurGetImagesFromAlbum(t *testing.T) {
 		fmt.Println(s)
 	}
 }
+
+func TestDropBoxLinkExtractor(t *testing.T) {
+	var url string = "https://www.dropbox.com/s/k3yd0mo967sutzd/Screenshot%20-%20150514%20-%2020%3A12%3A03.png"
+	_, err := DropBoxLinkExtractor(url)
+	if err != nil {
+		t.Fatal(err)
+	}
+}

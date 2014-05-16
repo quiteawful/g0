@@ -2,6 +2,7 @@ package util
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"regexp"
 )
@@ -54,4 +55,29 @@ func ImgurGetImagesFromGallery(id string) ([]string, error) {
 		}
 	}
 	return links, nil
+}
+
+func DropBoxLinkExtractor(url string) (s string, err error) {
+	if url == "" {
+		err = errors.New("Emtpy url")
+		log.Printf("Util.DropBoxLinkExtractor: %s\n", err.Error())
+		return "", err
+	}
+
+	src, err := DownloadPage(url)
+	if err != nil {
+		log.Printf("Util.DropBoxLinkExtractor: %s\n", err.Error())
+		return "", err
+	}
+	urlregex := regexp.MustCompile(`", "(?P<url>https:\/\/dl\.dropboxusercontent\.com\/(.*))"\) }\);`)
+
+	if urlregex.MatchString(src) {
+		fmt.Println("hi")
+		raw := urlregex.FindStringSubmatch(src)
+
+		s = "https://dl.dropboxusercontent.com/" + raw[2]
+		fmt.Println(s)
+		return s, nil
+	}
+	panic("unreachable")
 }
