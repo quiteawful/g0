@@ -4,10 +4,12 @@ package util
 import (
 	"crypto/md5"
 	"crypto/rand"
+	"errors"
 	"fmt"
 	"github.com/aimless/g0/conf"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -108,5 +110,29 @@ func newLenChars(length int, chars []byte) string {
 }
 
 func IsDirWriteable(path string) bool {
+	// can be used for setup/startup to check wether we can write to imagepath.
 	return false
+}
+
+func DownloadPage(link string) (string, error) {
+	if link == "" {
+		err := errors.New("Empty url.")
+		log.Printf("Util.DownloadPage: %s\n", err.Error())
+		return "", err
+	}
+
+	resp, err := http.Get(link)
+	if err != nil {
+		log.Printf("Util.DownloadPage: %s\n", err.Error())
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Util.DownloadPage: %s\n", err.Error())
+		return "", err
+	}
+
+	return string(body), nil
 }
