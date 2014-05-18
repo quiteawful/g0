@@ -55,7 +55,7 @@ func main() {
 		}
 		img.SaveImageAsJPG("thumb-"+hash+".jpg", thmb)
 
-		dbase.NewImage(hash, f, "thumb-"+f, link.URL, link.Network, link.Channel, link.Poster)
+		dbase.NewImage(hash, f, "thumb-"+hash+".jpg", link.URL, link.Network, link.Channel, link.Poster)
 
 	}
 }
