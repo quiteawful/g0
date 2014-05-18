@@ -53,7 +53,7 @@ func main() {
 		if err != nil {
 			log.Printf("Main: %s\n", err.Error())
 		}
-		img.SaveImageAsJPG("thumb-"+f, thmb)
+		img.SaveImageAsJPG("thumb-"+hash+".jpg", thmb)
 
 		dbase.NewImage(hash, f, "thumb-"+f, link.URL, link.Network, link.Channel, link.Poster)
 
