@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	//"errors"
 	"github.com/aimless/g0/conf"
+	"github.com/aimless/g0/util"
 	"github.com/thoj/go-ircevent"
 	"log"
 	"regexp"
@@ -18,6 +19,8 @@ var chprefixes = map[uint8]bool{
 }
 
 var urlregex = regexp.MustCompile(`((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)`)
+var imgurregex = regexp.MustCompile("(http://)?imgur.com/gallery/[A-Za-z0-9]*")
+var idregex = regexp.MustCompile("[A-Za-z0-9]*")
 var useCrypto = true
 
 type Bot struct {
@@ -85,19 +88,25 @@ func (b *Bot) Run() {
 		})
 		ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
 			if urlregex.MatchString(e.Message()) {
-				urlString := urlregex.FindStringSubmatch(e.Message())
-				//ircCon.Privmsg(e.Arguments[0], ">"+urlString[0])
+
+				urlString := urlregex.FindStringSubmatch(e.Message())[0]
+
+				if imgurregex.MatchString(urlString) {
+					arr := idregex.FindAllString(urlString, -1)
+					id := arr[len(arr)-1]
+					galleryUrlString, err := util.ImgurGetImagesFromGallery(id)
+					if err != nil {
+						log.Printf("Ircbot: %s\n", err.Error())
+					}
+					urlString = galleryUrlString[0]
+				}
 
 				if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
-					b.LinkChannel <- Link{urlString[0], i.Network, ircch, e.Nick}
+					b.LinkChannel <- Link{urlString, i.Network, ircch, e.Nick}
 				}
 			}
 		})
 		i.Connection = ircCon
 		//ircCon.Loop()
 	}
-}
-
-func parseIrc(e *irc.Event, ircCon *irc.Connection) {
-
 }
