@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/quiteawful/g0/api"
 	"github.com/quiteawful/g0/conf"
 	"github.com/quiteawful/g0/db"

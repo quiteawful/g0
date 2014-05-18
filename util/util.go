@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os/exec"
 	"regexp"
 )
 
@@ -38,7 +39,7 @@ func init() {
 const MAX_SIZE = 10485760
 
 var StdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
-var imageregex = regexp.MustCompile(`image\/(.+)`)
+var imageregex = regexp.MustCompile(`image\/(.+)|video\/webm`)
 
 func DownloadImage(link string) (filename, hash string, errret error) {
 	_, err := url.Parse(link)
@@ -47,8 +48,10 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 	}
 	var bufa [64]byte
 	var b []byte
-	size := 0
 	var urlType []string
+	var mime string
+
+	size := 0
 	buf := bufa[:]
 	res, err := http.Get(link)
 	if err != nil {
@@ -61,7 +64,7 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 	for {
 		n, err := res.Body.Read(buf)
 		if size == 0 {
-			mime := http.DetectContentType(buf)
+			mime = http.DetectContentType(buf)
 			urlType = imageregex.FindStringSubmatch(mime)
 			if urlType == nil {
 				return "", "", fmt.Errorf("not an image: %q", mime)
@@ -75,9 +78,17 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 		if err == io.EOF {
 			h := md5.New()
 			h.Write(b)
+			if urlType[1] == "" {
+				urlType[1] = "webm"
+			}
 			filename = newLenChars(6, StdChars) + "." + urlType[1]
 			ioutil.WriteFile(_util.Imagepath+filename, b, 0644)
-
+			if mime == "video/webm" {
+				out, err := exec.Command("ffmpeg", "-y", "-i", _util.Imagepath+filename, "-ss", "2", "-vframes", "1", _util.Imagepath+"tmp.jpeg").CombinedOutput()
+				if err != nil {
+					fmt.Println(err.Error() + string(out))
+				}
+			}
 			return filename, fmt.Sprintf("%x", h.Sum(nil)), nil
 		}
 	}
