@@ -1,6 +1,6 @@
 {
-    "Imagepath": "/home/soda/images/",
-    "Thumbpath": "/home/soda/images/",
+    "Imagepath": "/root/images/",
+    "Thumbpath": "/root/images/",
 	"DbEngine": "sqlite3",
     "DbFile": "g0.db",
     "TblImages": "g0_images",
