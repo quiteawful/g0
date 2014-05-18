@@ -6,7 +6,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"github.com/aimless/g0/conf"
+	"github.com/quiteawful/g0/conf"
 	"io"
 	"io/ioutil"
 	"log"

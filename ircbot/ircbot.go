@@ -3,8 +3,8 @@ package IrcBot
 import (
 	"crypto/tls"
 	//"errors"
-	"github.com/aimless/g0/conf"
-	"github.com/aimless/g0/util"
+	"github.com/quiteawful/g0/conf"
+	"github.com/quiteawful/g0/util"
 	"github.com/thoj/go-ircevent"
 	"log"
 	"regexp"

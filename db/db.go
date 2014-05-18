@@ -3,8 +3,8 @@ package Db
 import (
 	"database/sql"
 	"errors"
-	"github.com/aimless/g0/conf"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/quiteawful/g0/conf"
 	"log"
 )
 

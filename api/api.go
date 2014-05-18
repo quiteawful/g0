@@ -3,9 +3,9 @@ package Api
 
 import (
 	"errors"
-	"github.com/aimless/g0/conf"
-	"github.com/aimless/g0/db"
 	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/quiteawful/g0/conf"
+	"github.com/quiteawful/g0/db"
 	"log"
 	"net/http"
 	"strconv"
