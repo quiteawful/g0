@@ -7,8 +7,9 @@ package img
 
 import (
 	"code.google.com/p/graphics-go/graphics"
+	_ "code.google.com/p/vp8-go/webp"
 	"fmt"
-	"github.com/aimless/g0/conf"
+	"github.com/quiteawful/g0/conf"
 	"image"
 	_ "image/gif"
 	"image/jpeg"
