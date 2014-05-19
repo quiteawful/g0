@@ -35,6 +35,8 @@ class Detail{
   int _windowHeight;
 
   ImageElement _loadedImage;
+  VideoElement _loadedVideo;
+  Element _lastLoaded;
 
   bool _isShown = false;
   bool get isShown => _isShown;
@@ -88,7 +90,7 @@ class Detail{
   void _onResize(){
     _windowWidth = window.innerWidth;
     _windowHeight = window.innerHeight;
-    _setImageSize();
+    _setDetailSize(_lastLoaded);
   }
 
   /**
@@ -103,9 +105,21 @@ class Detail{
     assert(id != null);
     assert(imageUrl != null);
 
-    _loadedImage = new ImageElement(src: imageUrl);
-    _loadedImage.classes.add('detail-image');
-    _loadedImage.onLoad.listen((Event evt) => _showImage(evt.target));
+    if(imageUrl.substring(imageUrl.length - 4, imageUrl.length) == 'webm'){
+      _loadedVideo = new VideoElement();
+      var source = new SourceElement();
+      source.src = imageUrl;
+      _loadedVideo.append(source);
+      _loadedVideo.classes.add('detail-image');
+      _loadedVideo.loop = true;
+      _loadedVideo.onLoadedData.listen((Event evt) =>  _showVideo(evt.target));
+      _lastLoaded = _loadedVideo;
+    } else {
+      _loadedImage = new ImageElement(src: imageUrl);
+      _loadedImage.classes.add('detail-image');
+      _loadedImage.onLoad.listen((Event evt) => _showImage(evt.target));
+      _lastLoaded = _loadedImage;
+    }
 
     DateTime imgDate = new DateTime.fromMillisecondsSinceEpoch(date);
 
@@ -191,24 +205,35 @@ class Detail{
     img.dataset['width'] = img.width.toString();
     img.dataset['height'] = img.height.toString();
 
-    _setImageSize();
+    _setDetailSize(img);
     _imageContainer.append(_loadedImage);
     _spinner.classes.remove('show');
     _close.classes.add('show');
   }
 
+  void _showVideo(VideoElement video){
+    video.dataset['width'] = video.videoWidth.toString();
+    video.dataset['height'] = video.videoHeight.toString();
+
+    _setDetailSize(video);
+    _imageContainer.append(_loadedVideo);
+    _spinner.classes.remove('show');
+    _close.classes.add('show');
+    _loadedVideo.play();
+  }
+
   /**
    * Calculate and apply optimal image size
    */
-  void _setImageSize(){
-    if(_loadedImage == null
-      || _loadedImage.dataset['width'] == null
-      || _loadedImage.dataset['height'] == null
+  void _setDetailSize(var element){
+    if(element == null
+      || element.dataset['width'] == null
+      || element.dataset['height'] == null
     ){
       return;
     }
-    int origWidth = int.parse(_loadedImage.dataset['width']);
-    int origHeight = int.parse(_loadedImage.dataset['height']);
+    int origWidth = int.parse(element.dataset['width']);
+    int origHeight = int.parse(element.dataset['height']);
 
     int width = origWidth > _windowWidth ? _windowWidth : origWidth;
     double ratio = width / origWidth;
@@ -227,7 +252,6 @@ class Detail{
 
     int left = width >= _windowWidth ? 0 : ((_windowWidth - width) / 2).ceil();
     int top = height >= _windowHeight ? 0 : ((_windowHeight - height) / 2).ceil();
-
 
     _element..style.width = '${width}px'
             ..style.height = '${height}px'
