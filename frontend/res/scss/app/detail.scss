@@ -39,7 +39,7 @@
 
   .center {
     margin: 0 auto;
-    img {
+    .detail-image {
       width: 100%;
       height: auto;
       display: block;
@@ -135,7 +135,7 @@
       display: none;
     }
 
-    .center img {
+    .center .detail-image {
       margin-bottom: 60px;
     }
   }
