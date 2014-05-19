@@ -63,7 +63,6 @@
     &.show {
       bottom: 0px;
     }
-
   }
 
   .close {
@@ -128,6 +127,17 @@
       border-top: 40px solid transparent;
       border-bottom: 40px solid transparent;
       border-right: 40px solid $link-color;}
+  }
+
+
+  @media (max-height: 400px) {
+    .footer {
+      display: none;
+    }
+
+    .center img {
+      margin-bottom: 60px;
+    }
   }
 }
 
