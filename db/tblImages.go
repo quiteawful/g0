@@ -88,6 +88,38 @@ func (db *Db) GetImage(id int) (result Image, err error) {
 	}
 	return result, nil
 }
+func (db *Db) GetPreviousImagesBefore(id, n int) (result []Image, err error) {
+	var query string = "SELECT * FROM " + db.DbImageTable + " where id > " + strconv.Itoa(id) " order by id asc limit 0, " + strconv.Itoa(n)
+	
+	rows, err := db.query(query)
+	if err != nil {
+		log.Printf("Db.GetLatestImages: %s\n", err)
+		return nil, err
+	}
+
+	for rows.Next() {
+		img := Image{}
+		err = rows.Scan(
+			&img.Id,
+			&img.Hash,
+			&img.Name,
+			&img.Thumbnail,
+			&img.Timestamp,
+			&img.Url,
+			&img.Network,
+			&img.Channel,
+			&img.User)
+
+		if err != nil {
+			log.Printf("Db.GetLatestImages: %s\n", err)
+			return nil, err
+		}
+
+		result = append(result, img)
+	}
+	return result, nil
+	
+}
 
 func (db *Db) GetLatestImages(id, n int) (result []Image, err error) {
 	var query string = "SELECT * FROM " + db.DbImageTable
