@@ -47,6 +47,12 @@
     }
   }
 
+  .error {
+    padding: 20px 40px;
+    text-align: center;
+    background: $background-color;
+  }
+
   .footer {
     position: fixed;
     width: 100%;

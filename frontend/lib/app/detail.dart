@@ -34,8 +34,9 @@ class Detail{
   int _windowWidth;
   int _windowHeight;
 
-  ImageElement _loadedImage;
-  VideoElement _loadedVideo;
+  ImageElement _image;
+  VideoElement _video;
+  DivElement _error;
   Element _lastLoaded;
 
   bool _isShown = false;
@@ -106,19 +107,26 @@ class Detail{
     assert(imageUrl != null);
 
     if(imageUrl.substring(imageUrl.length - 4, imageUrl.length) == 'webm'){
-      _loadedVideo = new VideoElement();
-      var source = new SourceElement();
-      source.src = imageUrl;
-      _loadedVideo.append(source);
-      _loadedVideo.classes.add('detail-image');
-      _loadedVideo.loop = true;
-      _loadedVideo.onLoadedData.listen((Event evt) =>  _showVideo(evt.target));
-      _lastLoaded = _loadedVideo;
+      _video = new VideoElement();
+      if("" == _video.canPlayType('video/webm; codecs="vp8, vorbis"')){
+        new Future.delayed(new Duration(milliseconds: 200), (){
+          _showError('Your browser does not support webm');
+        });
+        _lastLoaded = _error;
+      } else {
+        var source = new SourceElement();
+        source.src = imageUrl;
+        _video.append(source);
+        _video.classes.add('detail-image');
+        _video.loop = true;
+        _video.onLoadedData.listen((Event evt) =>  _showVideo(evt.target));
+        _lastLoaded = _video;
+      }
     } else {
-      _loadedImage = new ImageElement(src: imageUrl);
-      _loadedImage.classes.add('detail-image');
-      _loadedImage.onLoad.listen((Event evt) => _showImage(evt.target));
-      _lastLoaded = _loadedImage;
+      _image = new ImageElement(src: imageUrl);
+      _image.classes.add('detail-image');
+      _image.onLoad.listen((Event evt) => _showImage(evt.target));
+      _lastLoaded = _image;
     }
 
     DateTime imgDate = new DateTime.fromMillisecondsSinceEpoch(date);
@@ -206,7 +214,7 @@ class Detail{
     img.dataset['height'] = img.height.toString();
 
     _setDetailSize(img);
-    _imageContainer.append(_loadedImage);
+    _imageContainer.append(_image);
     _spinner.classes.remove('show');
     _close.classes.add('show');
   }
@@ -216,10 +224,29 @@ class Detail{
     video.dataset['height'] = video.videoHeight.toString();
 
     _setDetailSize(video);
-    _imageContainer.append(_loadedVideo);
+    _imageContainer.append(video);
     _spinner.classes.remove('show');
     _close.classes.add('show');
-    _loadedVideo.play();
+    video.play();
+  }
+
+  void _showError(String message){
+    _error = new DivElement();
+    _error.classes.add('detail-image');
+    _error.classes.add('error');
+    _error.innerHtml = message;
+
+    int left = ((_windowWidth - 300) / 2).ceil();
+    int top = ((_windowHeight - 100) / 2).ceil();
+
+    _element.style..width = '300px'
+                  ..height = '100px'
+                  ..left = '${left}px'
+                  ..top = '${top}px';
+
+    _imageContainer.append(_error);
+    _spinner.classes.remove('show');
+    _close.classes.add('show');
   }
 
   /**
