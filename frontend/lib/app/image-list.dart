@@ -187,13 +187,10 @@ class ImageList {
   }
 
   void _setActive(LIElement target){
-    //TODO: find a way to change active without flickering detail
-    /*
     items.forEach((LIElement item){
       item.classes.remove('active');
     });
     target.classes.add('active');
-    */
     active = target;
   }
 
@@ -219,7 +216,7 @@ class ImageList {
     if(active == null){
       index = 0;
     } else {
-      index = items.indexOf(active) - 2;
+      index = items.indexOf(active) - 1;
     }
     if(index >= 0){
       LIElement target = items[index];
