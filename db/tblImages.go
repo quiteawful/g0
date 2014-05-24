@@ -89,13 +89,14 @@ func (db *Db) GetImage(id int) (result Image, err error) {
 	return result, nil
 }
 func (db *Db) GetPreviousImagesBefore(id, n int) (result []Image, err error) {
+	var strId string = strconv.Itoa(id)
+	var strN string = strconv.Itoa(n)
 	var query string = "SELECT * FROM " +
 		db.DbImageTable +
 		" where id > " +
-		strconv.Itoa(id) +
-		" order by id desc limit 0, " +
-		strconv.Itoa(n)
-
+		strId +
+		" and id <= (" strId + " + " + strN + ")"
+		
 	rows, err := db.query(query)
 	if err != nil {
 		log.Printf("Db.GetLatestImages: %s\n", err)
