@@ -61,7 +61,9 @@ class G0 {
     });
 
     imageList.onEnd.listen((_){
-      _loadImages(imageList.currentOffset, imageList.perPage);
+      _loadImages(imageList.currentOffset, imageList.perPage).then((_){
+        imageList.updateScrollPosition();
+      });
     });
   }
 

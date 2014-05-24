@@ -111,6 +111,12 @@ class ImageList {
     });
   }
 
+  void updateScrollPosition(){
+    if(active != null){
+      window.scrollTo(0, active.offsetTop);
+    }
+  }
+
   /**
    * Makes loading spinner visible
    */
@@ -198,7 +204,7 @@ class ImageList {
     } else {
       index = items.indexOf(active) + 1;
     }
-    if(index == items.length - 1){
+    if(index == items.length - perRow){
       _onEnd.add(true);
     }
     if(index < items.length){
