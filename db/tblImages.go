@@ -95,7 +95,7 @@ func (db *Db) GetPreviousImagesBefore(id, n int) (result []Image, err error) {
 		db.DbImageTable +
 		" where id > " +
 		strId +
-		" and id <= (" + strId + " + " + strN + ")"
+		" and id <= (" + strId + " + " + strN + ") order by id desc"
 
 	rows, err := db.query(query)
 	if err != nil {
