@@ -14,6 +14,7 @@ class Detail{
   Element _cover;
   Element _spinner;
   Element _imageContainer;
+  Element _header;
   Element _footer;
   Element _user;
   Element _channel;
@@ -33,6 +34,8 @@ class Detail{
 
   int _windowWidth;
   int _windowHeight;
+  int _headerHeight;
+  int _footerHeight;
 
   ImageElement _image;
   VideoElement _video;
@@ -64,6 +67,7 @@ class Detail{
     _element = querySelector('#container .detail');
     _cover = querySelector('#container .cover');
     _spinner = _element.querySelector('.spinner');
+    _header = querySelector('.header');
     _footer = _element.querySelector('.footer');
     _user = _footer.querySelector('.user');
     _channel = _footer.querySelector('.channel');
@@ -91,7 +95,20 @@ class Detail{
   void _onResize(){
     _windowWidth = window.innerWidth;
     _windowHeight = window.innerHeight;
-    _setDetailSize(_lastLoaded);
+    _headerHeight = _header.offsetHeight;
+    _footerHeight = _footer.offsetHeight;
+    if(_lastLoaded == null){
+      return;
+    }
+
+    switch(_lastLoaded.tagName){
+      case 'IMG':
+        _setImageSize(_lastLoaded);
+        break;
+      case 'VIDEO':
+        _setVideoSize(_lastLoaded);
+        break;
+    }
   }
 
   /**
@@ -213,7 +230,7 @@ class Detail{
     img.dataset['width'] = img.width.toString();
     img.dataset['height'] = img.height.toString();
 
-    _setDetailSize(img);
+    _setImageSize(img);
     _imageContainer.append(_image);
     _spinner.classes.remove('show');
     _close.classes.add('show');
@@ -223,7 +240,7 @@ class Detail{
     video.dataset['width'] = video.videoWidth.toString();
     video.dataset['height'] = video.videoHeight.toString();
 
-    _setDetailSize(video);
+    _setVideoSize(video);
     _imageContainer.append(video);
     _spinner.classes.remove('show');
     _close.classes.add('show');
@@ -249,10 +266,32 @@ class Detail{
     _close.classes.add('show');
   }
 
-  /**
-   * Calculate and apply optimal image size
-   */
-  void _setDetailSize(var element){
+  void _setImageSize(ImageElement element){
+    if(element == null
+         || element.dataset['width'] == null
+         || element.dataset['height'] == null
+       ){
+         return;
+       }
+       int origWidth = int.parse(element.dataset['width']);
+       int origHeight = int.parse(element.dataset['height']);
+
+       int width = origWidth > _windowWidth ? _windowWidth : origWidth;
+       double ratio = width / origWidth;
+       int height = (origHeight * ratio).ceil();
+
+       int visibleHeight = _windowHeight - _headerHeight - _footerHeight;
+       if( height > visibleHeight ){
+         height = _windowHeight;
+         _element.classes.add('scrollable');
+       } else {
+         _element.classes.remove('scrollable');
+       }
+
+       _setDetailSize(width, height);
+  }
+
+  void _setVideoSize(VideoElement element){
     if(element == null
       || element.dataset['width'] == null
       || element.dataset['height'] == null
@@ -266,20 +305,27 @@ class Detail{
     double ratio = width / origWidth;
     int height = (origHeight * ratio).ceil();
 
-    //TODO: inject this or move it to config
-    int headerHeight = 60;
-    int footerHeight = 120;
-
-    if( height + headerHeight + footerHeight > _windowHeight  ){
-      height = _windowHeight;
-      _element.classes.add('scrollable');
-    } else {
-      _element.classes.remove('scrollable');
+    int visibleHeight = _windowHeight - _headerHeight - _footerHeight;
+    if( height > visibleHeight  ){
+       ratio = height / visibleHeight;
+       height = visibleHeight;
+       width = (width / ratio).ceil();
     }
+
+    _element.classes.remove('scrollable');
+    _setDetailSize(width, height);
+  }
+
+  /**
+   * apply optimal detail size
+   */
+  void _setDetailSize(int width, int height){
 
     int left = width >= _windowWidth ? 0 : ((_windowWidth - width) / 2).ceil();
     int top = height >= _windowHeight ? 0 : ((_windowHeight - height) / 2).ceil();
 
+    print(left);
+    print(top);
     _element..style.width = '${width}px'
             ..style.height = '${height}px'
             ..style.left = '${left}px'
