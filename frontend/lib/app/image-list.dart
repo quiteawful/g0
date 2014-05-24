@@ -12,6 +12,9 @@ class ImageList {
   int _pageWidth;
   int _pageHeight;
 
+  StreamController _onEnd = new StreamController();
+  Stream get onEnd => _onEnd.stream;
+
   Detail detail = new Detail();
 
   /**
@@ -195,6 +198,9 @@ class ImageList {
     } else {
       index = items.indexOf(active) + 1;
     }
+    if(index == items.length - 1){
+      _onEnd.add(true);
+    }
     if(index < items.length){
       LIElement target = items[index];
       _setActive(target);
@@ -207,7 +213,7 @@ class ImageList {
     if(active == null){
       index = 0;
     } else {
-      index = items.indexOf(active) - 1;
+      index = items.indexOf(active) - 2;
     }
     if(index >= 0){
       LIElement target = items[index];
