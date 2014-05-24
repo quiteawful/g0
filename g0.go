@@ -26,7 +26,7 @@ func main() {
 	}
 	conf.Fill(api)
 	conf.Fill(bot)
-
+	conf.Fill(_util)
 	go api.Run()
 	go bot.Run()
 
@@ -54,7 +54,7 @@ func main() {
 		}
 
 		thumbfile := f
-		tmpbyte, err := ioutil.ReadFile("/home/soda/images/" + thumbfile)
+		tmpbyte, err := ioutil.ReadFile(_util.Imagepath + thumbfile)
 		if err != nil {
 			log.Printf("main open file: %s\n", err.Error())
 		}

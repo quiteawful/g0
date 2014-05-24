@@ -51,6 +51,7 @@ func NewApi(addr string) (*Api, error) {
 	}
 	return &Api{addr}, nil
 }
+
 func (a *Api) Run() (err error) {
 	handler := rest.ResourceHandler{
 		EnableRelaxedContentType: true,
@@ -59,6 +60,7 @@ func (a *Api) Run() (err error) {
 	}
 	handler.SetRoutes(
 		&rest.Route{"GET", "/api/:imgid/:count", GetIDstuff},
+		&rest.Route{"GET", "/api/r/:imgid/:count", GetIDstuffReverse},
 		&rest.Route{"GET", "/.status",
 			func(w rest.ResponseWriter, r *rest.Request) {
 				w.WriteJson(handler.GetStatus())
@@ -68,6 +70,59 @@ func (a *Api) Run() (err error) {
 	http.ListenAndServe(a.Addr, &handler)
 	return nil
 }
+
+func GetIDstuffReverse(w rest.ResponseWriter, r *rest.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	var imgreturn []Image
+
+	imgid, err := strconv.Atoi(r.PathParam("imgid"))
+	if err != nil {
+		log.Printf("api.GetIDstuffReverse: %s\n", err.Error())
+		rest.Error(w, "NYAN not found", 405)
+		return
+	}
+
+	count, err := strconv.Atoi(r.PathParam("count"))
+	if err != nil {
+		log.Printf("api.GetIDstuffReverse: %s\n", err.Error())
+		rest.Error(w, "NYAN not found", 405)
+		return
+	}
+
+	// alle parameter beisammen, call db foo
+	dbase, err := Db.NewDb()
+	if err != nil {
+		log.Printf("api.GetIDstuffReverse: %s\n", err.Error())
+		rest.Error(w, "NAYN not found", 405)
+		return
+	}
+
+	dbarray, err := dbase.GetPreviousImagesBefore(imgid, count)
+	if err != nil {
+		log.Printf("api.GetIDstuffReverse: %s\n", err.Error())
+		rest.Error(w, "NYAN not found", 405)
+		return
+	}
+
+	for _, ele := range dbarray {
+		var tmpImage Image
+		tmpImage.ID = strconv.Itoa(ele.Id)
+		tmpImage.Img = ele.Name
+		tmpImage.Thumb = ele.Thumbnail
+		tmpImage.Date = ele.Timestamp.Unix()
+		tmpImage.Nick = ele.User
+		tmpImage.Chan = ele.Channel
+		tmpImage.Link = ele.Url
+		imgreturn = append(imgreturn, tmpImage)
+	}
+	w.WriteJson(
+		&IDTest{
+			ImageSrc: "http://aidskrebs.net/images/",
+			ThumbSrc: "http://aidskrebs.net/images/",
+			Images:   imgreturn,
+		})
+}
+
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
