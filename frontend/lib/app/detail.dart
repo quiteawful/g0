@@ -36,6 +36,7 @@ class Detail{
   int _windowHeight;
   int _headerHeight;
   int _footerHeight;
+  int _elementPadding = 20;
 
   ImageElement _image;
   VideoElement _video;
@@ -273,8 +274,9 @@ class Detail{
        ){
          return;
        }
-       int origWidth = int.parse(element.dataset['width']);
-       int origHeight = int.parse(element.dataset['height']);
+
+       int origWidth = int.parse(element.dataset['width']) + _elementPadding;
+       int origHeight = int.parse(element.dataset['height']) + _elementPadding;
 
        int width = origWidth > _windowWidth ? _windowWidth : origWidth;
        double ratio = width / origWidth;
@@ -298,8 +300,9 @@ class Detail{
     ){
       return;
     }
-    int origWidth = int.parse(element.dataset['width']);
-    int origHeight = int.parse(element.dataset['height']);
+
+    int origWidth = int.parse(element.dataset['width']) + _elementPadding;
+    int origHeight = int.parse(element.dataset['height']) + _elementPadding;
 
     int width = origWidth > _windowWidth ? _windowWidth : origWidth;
     double ratio = width / origWidth;
