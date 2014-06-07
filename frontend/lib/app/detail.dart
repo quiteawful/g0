@@ -324,8 +324,6 @@ class Detail{
     int left = width >= _windowWidth ? 0 : ((_windowWidth - width) / 2).ceil();
     int top = height >= _windowHeight ? 0 : ((_windowHeight - height) / 2).ceil();
 
-    print(left);
-    print(top);
     _element..style.width = '${width}px'
             ..style.height = '${height}px'
             ..style.left = '${left}px'
