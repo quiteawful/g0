@@ -72,6 +72,7 @@ func main() {
 		thmb, err := img.MakeThumbnail(imgbytes, 150, 150)
 		if err != nil {
 			log.Printf("Main: %s\n", err.Error())
+			dbase.NewImage(hash, f, "error.jpg", link.URL, link.Network, link.Channel, link.Poster)
 			continue
 		}
 		err = img.SaveImageAsJPG("thumb-"+hash+".jpg", thmb)
