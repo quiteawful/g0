@@ -57,6 +57,7 @@ func main() {
 		tmpbyte, err := ioutil.ReadFile(_util.Imagepath + thumbfile)
 		if err != nil {
 			log.Printf("main open file: %s\n", err.Error())
+			continue
 		}
 		mime := http.DetectContentType(tmpbyte)
 		if mime == "video/webm" {
@@ -65,15 +66,18 @@ func main() {
 		imgbytes, err := img.GetImageFromFile(thumbfile)
 		if err != nil {
 			log.Printf("Main: %s\n", err.Error())
+			continue
 		}
 
 		thmb, err := img.MakeThumbnail(imgbytes, 150, 150)
 		if err != nil {
 			log.Printf("Main: %s\n", err.Error())
+			continue
 		}
 		err = img.SaveImageAsJPG("thumb-"+hash+".jpg", thmb)
 		if err != nil {
 			log.Printf("Main: %s\n", err.Error())
+			continue
 		}
 		dbase.NewImage(hash, f, "thumb-"+hash+".jpg", link.URL, link.Network, link.Channel, link.Poster)
 
