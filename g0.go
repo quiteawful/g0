@@ -43,6 +43,7 @@ func main() {
 
 		// check if the imagehash is already in the database
 		hashcount, err := dbase.GetHashCount(hash)
+		log.Printf("Debug: %s %q\n", hash, hashcount)
 		if err != nil {
 			log.Printf("Main: %s\n", err.Error())
 			continue
