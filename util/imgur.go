@@ -54,6 +54,10 @@ func ImgurGetImagesFromGallery(id string) ([]string, error) {
 			links = append(links, "http://i.imgur.com/"+n[1])
 		}
 	}
+	if links == nil {
+		err := errors.New("No image found in gallery\n")
+		return nil, err
+	}
 	return links, nil
 }
 
