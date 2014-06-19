@@ -19,8 +19,6 @@ var chprefixes = map[uint8]bool{
 }
 
 var urlregex = regexp.MustCompile(`((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)`)
-var imgurregex = regexp.MustCompile("(http://)?imgur.com/gallery/[A-Za-z0-9]*")
-var idregex = regexp.MustCompile("[A-Za-z0-9]*")
 var useCrypto = true
 
 type Bot struct {
