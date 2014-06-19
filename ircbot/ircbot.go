@@ -3,12 +3,12 @@ package IrcBot
 import (
 	"crypto/tls"
 	//"errors"
-	"github.com/quiteawful/g0/conf"
-	"github.com/quiteawful/g0/util"
-	"github.com/thoj/go-ircevent"
 	"log"
 	"regexp"
 	"strings"
+
+	"github.com/quiteawful/g0/conf"
+	"github.com/thoj/go-ircevent"
 )
 
 var chprefixes = map[uint8]bool{
@@ -88,19 +88,7 @@ func (b *Bot) Run() {
 		})
 		ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
 			if urlregex.MatchString(e.Message()) {
-
 				urlString := urlregex.FindStringSubmatch(e.Message())[0]
-
-				if imgurregex.MatchString(urlString) {
-					arr := idregex.FindAllString(urlString, -1)
-					id := arr[len(arr)-1]
-					galleryUrlString, err := util.ImgurGetImagesFromGallery(id)
-					if err != nil {
-						log.Printf("Ircbot: %s\n", err.Error())
-					}
-					urlString = galleryUrlString[0]
-				}
-
 				if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
 					b.LinkChannel <- Link{urlString, i.Network, ircch, e.Nick}
 				}

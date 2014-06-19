@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"github.com/quiteawful/g0/conf"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,10 +13,14 @@ import (
 	"net/url"
 	"os/exec"
 	"regexp"
+
+	"github.com/quiteawful/g0/conf"
 )
 
 var (
-	_util *ConfImg = nil
+	_util      *ConfImg = nil
+	imgurregex          = regexp.MustCompile("(http://)?imgur.com/gallery/[A-Za-z0-9]*")
+	idregex             = regexp.MustCompile("[A-Za-z0-9]*")
 )
 
 type ConfImg struct {
@@ -46,13 +49,26 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 	if err != nil {
 		return "", "", err
 	}
-	var bufa [64]byte
-	var b []byte
-	var urlType []string
-	var mime string
+	var (
+		bufa    [64]byte
+		b       []byte
+		urlType []string
+		mime    string
+	)
 
 	size := 0
 	buf := bufa[:]
+	/* extract image links from imgur */
+	if imgurregex.MatchString(link) {
+		arr := idregex.FindAllString(link, -1)
+		id := arr[len(arr)-1]
+		galleryUrlString, err := ImgurGetImagesFromGallery(id)
+		if err != nil {
+			log.Printf("Util parse Imgur: %s\n", err.Error())
+			return "", "", err
+		}
+		link = galleryUrlString[0]
+	}
 	res, err := http.Get(link)
 	if err != nil {
 		return "", "", err

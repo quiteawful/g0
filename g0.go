@@ -1,15 +1,16 @@
 package main
 
 import (
+	"io/ioutil"
+	"log"
+	"net/http"
+
 	"github.com/quiteawful/g0/api"
 	"github.com/quiteawful/g0/conf"
 	"github.com/quiteawful/g0/db"
 	"github.com/quiteawful/g0/ircbot"
 	"github.com/quiteawful/g0/util"
 	"github.com/quiteawful/g0/util/img"
-	"io/ioutil"
-	"log"
-	"net/http"
 )
 
 var (
