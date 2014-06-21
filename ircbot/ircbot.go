@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/quiteawful/g0/conf"
+	//"github.com/quiteawful/g0/conf"
 	"github.com/thoj/go-ircevent"
 )
 
@@ -46,16 +46,17 @@ var (
 	_bot *Bot = nil
 )
 
-func init() {
-	if _bot == nil {
-		_bot = new(Bot)
-	}
-	tmpBot := new(Bot)
-	conf.Fill(tmpBot)
-	_bot.Nickname = tmpBot.Nickname
-	_bot.Realname = tmpBot.Realname
-	_bot.Connections = tmpBot.Connections
-}
+// If shit's broken this is probably the reason for it.
+//func init() {
+//	if _bot == nil {
+//		_bot = new(Bot)
+//	}
+//	tmpBot := new(Bot)
+//	conf.Fill(tmpBot)
+//	_bot.Nickname = tmpBot.Nickname
+//	_bot.Realname = tmpBot.Realname
+//	_bot.Connections = tmpBot.Connections
+//}
 
 func (b *Bot) Run() {
 	ircCon := irc.IRC(b.Nickname, b.Realname)
