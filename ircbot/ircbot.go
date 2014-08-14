@@ -87,6 +87,9 @@ func (b *Bot) Run() {
 		})
 		ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
 			if urlregex.MatchString(e.Message()) {
+				if strings.Contains("!nope") {
+					return // bilder ignorieren.
+				}
 				urlString := urlregex.FindStringSubmatch(e.Message())[0]
 				if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
 					b.LinkChannel <- Link{urlString, i.Network, ircch, e.Nick}
