@@ -98,6 +98,6 @@ func (b *Bot) Run() {
 			}
 		})
 		i.Connection = ircCon
-		//ircCon.Loop()
+		go ircCon.Loop()
 	}
 }
