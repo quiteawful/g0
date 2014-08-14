@@ -86,11 +86,12 @@ func (b *Bot) Run() {
 			}
 		})
 		ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
-			if urlregex.MatchString(e.Message()) {
-				if strings.Contains("!nope") {
-					return // bilder ignorieren.
+			msg := e.Message()
+			if urlregex.MatchString(msg) {
+				if strings.HasPrefix(msg, "!nope") {
+					return // nope-ing out of aidskrebs
 				}
-				urlString := urlregex.FindStringSubmatch(e.Message())[0]
+				urlString := urlregex.FindStringSubmatch(msg)[0]
 				if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
 					b.LinkChannel <- Link{urlString, i.Network, ircch, e.Nick}
 				}
