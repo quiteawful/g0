@@ -18,9 +18,10 @@ import (
 )
 
 var (
-	_util      *ConfImg = nil
-	imgurregex          = regexp.MustCompile("(http://)?imgur.com/gallery/[A-Za-z0-9]*")
-	idregex             = regexp.MustCompile("[A-Za-z0-9]*")
+	_util           *ConfImg = nil
+	imgurregex               = regexp.MustCompile("(http://)?imgur.com/gallery/[A-Za-z0-9]*")
+	imguralbumregex          = regexp.MustCompile("http://?imgur.com/a/[A-Za-z0-9]*")
+	idregex                  = regexp.MustCompile("[A-Za-z0-9]*")
 )
 
 type ConfImg struct {
@@ -69,6 +70,18 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 		}
 		link = galleryUrlString[0]
 	}
+
+	if imguralbumregex.MatchString(link) {
+		arr := idregex.FindAllString(link, -1)
+		id := arr[len(arr)-1]
+		albumUrlString, err := ImgurGetImagesFromAlbum(id)
+		if err != nil {
+			log.Printf("util.DownloadImage: Could not fetch images from imgur album. %s\n", err.Error())
+			return "", "", err
+		}
+		link = albumUrlString[0]
+	}
+
 	res, err := http.Get(link)
 	if err != nil {
 		return "", "", err

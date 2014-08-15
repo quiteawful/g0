@@ -10,7 +10,7 @@ import (
 func ImgurGetImagesFromAlbum(id string) ([]string, error) {
 	var links []string
 	var urlregex = regexp.MustCompile(`data\-src="\/\/i\.imgur\.com\/(?P<id>(.*)[^s]\.(jpg|jpeg|png|gif|apng|tiff|bmp))" `)
-
+	urlregex = regexp.MustCompile(`<link rel="image_src" href="(http:\/\/|)i\.imgur\.com\/(?P<id>(.*)[^s]\.(jpg|jpeg|png|gif|apng|tiff|bmp))"\/>`)
 	if id == "" {
 		err := errors.New("Empty id.")
 		log.Printf("Util.ImgurGetImagesFromGallery: %s\n", err.Error())
@@ -25,9 +25,12 @@ func ImgurGetImagesFromAlbum(id string) ([]string, error) {
 
 	if urlregex.MatchString(src) {
 		raw := urlregex.FindAllStringSubmatch(src, -1)
+
 		for _, n := range raw {
-			links = append(links, "http://i.imgur.com/"+n[1])
+			links = append(links, "http://i.imgur.com/"+n[2])
 		}
+	} else {
+		return nil, errors.New("No links found")
 	}
 	return links, nil
 }
