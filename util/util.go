@@ -18,10 +18,11 @@ import (
 )
 
 var (
-	_util           *ConfImg = nil
-	imgurregex               = regexp.MustCompile("(http://)?imgur.com/gallery/[A-Za-z0-9]*")
-	imguralbumregex          = regexp.MustCompile("http://?imgur.com/a/[A-Za-z0-9]*")
-	idregex                  = regexp.MustCompile("[A-Za-z0-9]*")
+	_util               *ConfImg = nil
+	imgurregex                   = regexp.MustCompile("(http://)?imgur.com/gallery/[A-Za-z0-9]*")
+	imgurSubredditRegex          = regexp.MustCompile("(http://)?imgur.com/r/[A-Za-z0-9]*/[A-Za-z0-9]*")
+	imguralbumregex              = regexp.MustCompile("(http://)?imgur.com/a/[A-Za-z0-9]*")
+	idregex                      = regexp.MustCompile("[A-Za-z0-9]*")
 )
 
 type ConfImg struct {
@@ -80,6 +81,24 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 			return "", "", err
 		}
 		link = albumUrlString[0]
+	}
+
+	if imgurSubredditRegex.MatchString(link) {
+		arr := idregex.FindAllString(link, -1)
+		fmt.Printf("%q\n", arr)
+		var id string
+		if len(arr) == 8 {
+			id = arr[7]
+		} else {
+			return "", "", err
+		}
+
+		subredditlink, err := ImgurGetImageFromSubreddit(id)
+		if err != nil {
+			log.Printf("util.DownloadImage: Could not fetch image url from subreddit. %s\n", err.Error())
+			return "", "", err
+		}
+		link = subredditlink
 	}
 
 	res, err := http.Get(link)

@@ -35,6 +35,34 @@ func ImgurGetImagesFromAlbum(id string) ([]string, error) {
 	return links, nil
 }
 
+func ImgurGetImageFromSubreddit(id string) (string, error) {
+	var links []string
+	var urlregex = regexp.MustCompile(`<img src="\/\/i\.imgur\.com\/(?P<id>(.*)\.(jpg|jpeg|png|gif|apng|tiff|bmp))`)
+
+	if id == "" {
+		log.Printf("util.ImgurGetImageFromSubreddit: empty id.\n")
+		return "", errors.New("No id.")
+	}
+
+	src, err := DownloadPage("http://imgur.com/" + id)
+	if err != nil {
+		log.Printf("util.ImgurGetImageFromSubreddit: %s\n", err.Error())
+		return "", err
+	}
+
+	if urlregex.MatchString(src) {
+		raw := urlregex.FindAllStringSubmatch(src, -1)
+		for _, n := range raw {
+			links = append(links, "http://i.imgur.com/"+n[1])
+		}
+	}
+
+	if len(links) == 0 {
+		return "", errors.New("No images found")
+	}
+	return links[0], nil
+}
+
 func ImgurGetImagesFromGallery(id string) ([]string, error) {
 	var links []string
 	var urlregex = regexp.MustCompile(`<img src="\/\/i\.imgur\.com\/(?P<id>(.*)\.(jpg|jpeg|png|gif|apng|tiff|bmp))`)
