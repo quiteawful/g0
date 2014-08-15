@@ -66,6 +66,7 @@ func (a *Api) Run() (err error) {
 				w.WriteJson(handler.GetStatus())
 			},
 		},
+		&rest.Route{"GET", "/.statistics", GetStatistics},
 	)
 	http.ListenAndServe(a.Addr, &handler)
 	return nil
@@ -163,4 +164,16 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 			ThumbSrc: "http://aidskrebs.net/images/",
 			Images:   imgreturn,
 		})
+}
+
+func GetStatistics(w rest.ResponseWriter, r *rest.Request) {
+	dbase, err := Db.NewDb()
+	if err != nil {
+		log.Printf("api.GetStatistics: %s\n", err.Error())
+		rest.Error(w, "NYAN not found", 405)
+		return
+	}
+
+	stats := dbase.GetStatistics()
+	w.WriteJson(stats)
 }
