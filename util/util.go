@@ -85,7 +85,6 @@ func DownloadImage(link string) (filename, hash string, errret error) {
 
 	if imgurSubredditRegex.MatchString(link) {
 		arr := idregex.FindAllString(link, -1)
-		fmt.Printf("%q\n", arr)
 		var id string
 		if len(arr) == 8 {
 			id = arr[7]
