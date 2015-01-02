@@ -19,6 +19,7 @@ var chprefixes = map[uint8]bool{
 }
 
 var urlregex = regexp.MustCompile(`((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)`)
+var delregex = regexp.MustCompile(`!del (\d+)`)
 var useCrypto = true
 
 type Bot struct {
@@ -26,6 +27,7 @@ type Bot struct {
 	Realname    string "g0bot"
 	Connections []Conn
 	LinkChannel chan Link
+	DeleteImage chan string
 }
 
 type Conn struct {
@@ -86,18 +88,37 @@ func (b *Bot) Run() {
 			}
 		})
 		ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
-			msg := e.Message()
-			if urlregex.MatchString(msg) {
-				if strings.HasPrefix(msg, "!nope") {
-					return // nope-ing out of aidskrebs
-				}
-				urlString := urlregex.FindStringSubmatch(msg)[0]
-				if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
-					b.LinkChannel <- Link{urlString, i.Network, ircch, e.Nick}
-				}
-			}
+			parseIrcMsg(e, b)
 		})
 		i.Connection = ircCon
 		go ircCon.Loop()
 	}
+}
+
+func parseIrcMsg(e *irc.Event, b *Bot) {
+	// add images
+	if urlregex.MatchString(e.Message()) {
+		if strings.HasPrefix(e.Message(), "!nope") {
+			return // nope-ing out
+		}
+		urlString := urlregex.FindStringSubmatch(e.Message())[0]
+		if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
+			b.LinkChannel <- Link{urlString, b.Connections[0].Network, ircch, e.Nick}
+		}
+	}
+	//print help
+	if e.Message() == "!halp" {
+		if chprefixes[e.Arguments[0][0]] {
+			printHalp(e.Arguments[0], b)
+		}
+	}
+	// del image
+	if delregex.MatchString(e.Message()) {
+		b.DeleteImage <- delregex.FindStringSubmatch(e.Message())[0]
+	}
+}
+
+func printHalp(ch string, b *Bot) {
+	b.Connections[0].Connection.Privmsg(ch, "!nope <url>:		skip link")
+	b.Connections[0].Connection.Privmsg(ch, "!del   <id>:		delete image")
 }
