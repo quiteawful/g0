@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	//"github.com/quiteawful/g0/conf"
+	"github.com/quiteawful/g0/conf"
 	"github.com/thoj/go-ircevent"
 )
 
@@ -50,16 +51,16 @@ var (
 )
 
 // If shit's broken this is probably the reason for it.
-//func init() {
-//	if _bot == nil {
-//		_bot = new(Bot)
-//	}
-//	tmpBot := new(Bot)
-//	conf.Fill(tmpBot)
-//	_bot.Nickname = tmpBot.Nickname
-//	_bot.Realname = tmpBot.Realname
-//	_bot.Connections = tmpBot.Connections
-//}
+func init() {
+	if _bot == nil {
+		_bot = new(Bot)
+	}
+	tmpBot := new(Bot)
+	conf.Fill(tmpBot)
+	_bot.Nickname = tmpBot.Nickname
+	_bot.Realname = tmpBot.Realname
+	_bot.Connections = tmpBot.Connections
+}
 
 func (b *Bot) Run() {
 	ircCon := irc.IRC(b.Nickname, b.Realname)
@@ -67,7 +68,7 @@ func (b *Bot) Run() {
 	ircCon.UseTLS = true
 	ircCon.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	for _, i := range b.Connections {
+	for x, i := range b.Connections {
 		ircErr := ircCon.Connect(i.Address)
 		if ircErr != nil {
 			log.Println(ircErr.Error())
@@ -91,8 +92,8 @@ func (b *Bot) Run() {
 		ircCon.AddCallback("PRIVMSG", func(e *irc.Event) {
 			parseIrcMsg(e, b)
 		})
-		i.Connection = ircCon
-		go ircCon.Loop()
+		b.Connections[x].Connection = ircCon
+		go b.Connections[x].Connection.Loop()
 	}
 }
 
@@ -125,6 +126,7 @@ func parseIrcMsg(e *irc.Event, b *Bot) {
 }
 
 func printHalp(ch string, b *Bot) {
+
 	b.Connections[0].Connection.Privmsg(ch, "!nope <url>:		skip link")
 	b.Connections[0].Connection.Privmsg(ch, "!del   <id>:		delete image")
 }
