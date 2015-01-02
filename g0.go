@@ -73,7 +73,7 @@ func saveImage(link IrcBot.Link, dbase *Db.Db) {
 	mime := http.DetectContentType(tmpbyte)
 	if mime == "video/webm" {
 		//workaround for something i dont remember
-		thumbfile = "tmp.jpg"
+		thumbfile = "tmp.jpeg"
 	}
 	//open image...?
 	imgbytes, err := img.GetImageFromFile(thumbfile)
