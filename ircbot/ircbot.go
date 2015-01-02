@@ -5,6 +5,7 @@ import (
 	//"errors"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
 	//"github.com/quiteawful/g0/conf"
@@ -27,7 +28,7 @@ type Bot struct {
 	Realname    string "g0bot"
 	Connections []Conn
 	LinkChannel chan Link
-	DeleteImage chan string
+	DeleteImage chan int64
 }
 
 type Conn struct {
@@ -114,7 +115,12 @@ func parseIrcMsg(e *irc.Event, b *Bot) {
 	}
 	// del image
 	if delregex.MatchString(e.Message()) {
-		b.DeleteImage <- delregex.FindStringSubmatch(e.Message())[0]
+		id, err := strconv.ParseInt(delregex.FindStringSubmatch(e.Message())[0], 10, 64)
+		if err != nil {
+			log.Println("Parsing deletion-id:", err.Error())
+			return
+		}
+		b.DeleteImage <- id
 	}
 }
 

@@ -3,10 +3,11 @@ package Db
 import (
 	"database/sql"
 	"errors"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"strconv"
 	"time"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Image struct {
@@ -212,7 +213,7 @@ func (db *Db) GetImages(offset, n int) (result []Image, err error) {
 	return result, nil
 }
 
-func (db *Db) DeleteImage(id int) bool {
+func (db *Db) DeleteImage(id int64) bool {
 	if id < 1 {
 		return false
 	}
