@@ -32,6 +32,7 @@ func main() {
 	go bot.Run()
 
 	bot.LinkChannel = make(chan IrcBot.Link)
+	bot.DeleteImage = make(chan int64)
 
 	for {
 		select {
@@ -39,6 +40,7 @@ func main() {
 			saveImage(link, dbase)
 		case id := <-bot.DeleteImage:
 			dbase.DeleteImage(id)
+			// TODO: delete images from harddrive
 		}
 	}
 }
