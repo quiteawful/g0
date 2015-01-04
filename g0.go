@@ -81,7 +81,7 @@ func saveImage(link IrcBot.Link, dbase *Db.Db, bot *IrcBot.Bot) {
 				log.Println("Sending AAAALT-Infos:", err.Error())
 				return
 			}
-			fmtstr := fmt.Sprintf("AAAALT: http://aidskrebs.net/?offset=%s", img.Id)
+			fmtstr := fmt.Sprintf("AAAALT: http://aidskrebs.net/?offset=%d", img.Id)
 			bot.SendChannel <- IrcBot.Send{link.Channel, fmtstr}
 		}
 		return
