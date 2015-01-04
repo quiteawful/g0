@@ -35,7 +35,7 @@ func main() {
 	bot.LinkChannel = make(chan IrcBot.Link)
 	bot.DeleteImage = make(chan int64)
 	bot.SendChannel = make(chan IrcBot.Send)
-
+	go ircLoop(bot)
 	for {
 		select {
 		case link := <-bot.LinkChannel:
@@ -43,6 +43,13 @@ func main() {
 		case id := <-bot.DeleteImage:
 			dbase.DeleteImage(id)
 			// TODO: delete images from harddrive
+		}
+	}
+}
+
+func ircLoop(bot *IrcBot.Bot) {
+	for {
+		select {
 		case msg := <-bot.SendChannel:
 			bot.Connections[0].Connection.Privmsg(msg.IrcChan, msg.Msg)
 		}
@@ -72,6 +79,7 @@ func saveImage(link IrcBot.Link, dbase *Db.Db, bot *IrcBot.Bot) {
 			img, err := dbase.GetImageByHash(hash)
 			if err != nil {
 				log.Println("Sending AAAALT-Infos:", err.Error())
+				return
 			}
 			fmtstr := fmt.Sprintf("AAAALT: http://aidskrebs.net/?offset=%s", img.Id)
 			bot.SendChannel <- IrcBot.Send{link.Channel, fmtstr}

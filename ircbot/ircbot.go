@@ -122,7 +122,7 @@ func parseIrcMsg(e *irc.Event, b *Bot) {
 	}
 	// del image
 	if delregex.MatchString(e.Message()) {
-		id, err := strconv.ParseInt(delregex.FindStringSubmatch(e.Message())[0], 10, 64)
+		id, err := strconv.ParseInt(delregex.FindStringSubmatch(e.Message())[1], 10, 64)
 		if err != nil {
 			log.Println("Parsing deletion-id:", err.Error())
 			return
