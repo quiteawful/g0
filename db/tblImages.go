@@ -60,6 +60,23 @@ func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string
 	return id, nil
 }
 
+func (db *Db) GetImageByHash(hash string) (result Image, err error) {
+	query := "SELECT * FROM " + db.DbImageTable + "WHERE hash = ?;"
+	rows, err := db.query(query, hash)
+	if err != nil {
+		return Image{}, err
+	}
+
+	//no loop, as there *should* only be one result.
+	rows.Next()
+	err = rows.Scan(&result.Id, &result.Hash, &result.Name, &result.Thumbnail,
+		&result.Timestamp, &result.Url, &result.Network, &result.Channel, &result.Url)
+	if err != nil {
+		return Image{}, err
+	}
+	return result, nil
+}
+
 func (db *Db) GetImage(id int) (result Image, err error) {
 	if id < 1 {
 		err = errors.New("No id found.")

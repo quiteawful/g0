@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -33,19 +34,24 @@ func main() {
 
 	bot.LinkChannel = make(chan IrcBot.Link)
 	bot.DeleteImage = make(chan int64)
+	bot.SendChannel = make(chan IrcBot.Send)
 
 	for {
 		select {
 		case link := <-bot.LinkChannel:
-			saveImage(link, dbase)
+			saveImage(link, dbase, bot)
 		case id := <-bot.DeleteImage:
 			dbase.DeleteImage(id)
 			// TODO: delete images from harddrive
+		case msg := <-bot.SendChannel:
+			bot.Connections[0].Connection.Privmsg(msg.IrcChan, msg.Msg)
 		}
 	}
 }
 
-func saveImage(link IrcBot.Link, dbase *Db.Db) {
+// saveImage(...) is a mess.
+// TODO: refactor.
+func saveImage(link IrcBot.Link, dbase *Db.Db, bot *IrcBot.Bot) {
 	//download image, hash it
 	f, hash, err := util.DownloadImage(link.URL)
 	if err != nil {
@@ -60,6 +66,16 @@ func saveImage(link IrcBot.Link, dbase *Db.Db) {
 	}
 	if hashcount > 0 || hashcount == -1 {
 		// TODO: remove image from disk
+
+		//when does hashcount return -1? O.o
+		if hashcount > 0 {
+			img, err := dbase.GetImageByHash(hash)
+			if err != nil {
+				log.Println("Sending AAAALT-Infos:", err.Error())
+			}
+			fmtstr := fmt.Sprintf("AAAALT: http://aidskrebs.net/?offset=%s", img.Id)
+			bot.SendChannel <- IrcBot.Send{link.Channel, fmtstr}
+		}
 		return
 	}
 	//open image

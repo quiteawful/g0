@@ -30,6 +30,7 @@ type Bot struct {
 	Connections []Conn
 	LinkChannel chan Link
 	DeleteImage chan int64
+	SendChannel chan Send
 }
 
 type Conn struct {
@@ -37,6 +38,11 @@ type Conn struct {
 	Address    string
 	Network    string "unknownnetid"
 	Channels   []string
+}
+
+type Send struct {
+	IrcChan string
+	Msg     string
 }
 
 type Link struct {
