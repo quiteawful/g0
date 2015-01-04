@@ -61,7 +61,7 @@ func (db *Db) NewImage(hash, name, thumbnail, url, network, channel, user string
 }
 
 func (db *Db) GetImageByHash(hash string) (result Image, err error) {
-	query := "SELECT * FROM " + db.DbImageTable + "WHERE hash = ?;"
+	query := "SELECT * FROM " + db.DbImageTable + " WHERE hash = ?;"
 	rows, err := db.query(query, hash)
 	if err != nil {
 		return Image{}, err
