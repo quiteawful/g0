@@ -8,9 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	//"github.com/quiteawful/g0/conf"
 	"github.com/quiteawful/g0/conf"
-	"github.com/thoj/go-ircevent"
+	"github.com/quiteawful/go-ircevent"
 )
 
 var chprefixes = map[uint8]bool{
