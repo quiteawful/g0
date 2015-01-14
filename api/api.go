@@ -3,12 +3,13 @@ package Api
 
 import (
 	"errors"
-	"github.com/ant0ine/go-json-rest/rest"
-	"github.com/quiteawful/g0/conf"
-	"github.com/quiteawful/g0/db"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/quiteawful/g0/conf"
+	"github.com/quiteawful/g0/db"
 )
 
 type IDTest struct {
@@ -61,6 +62,7 @@ func (a *Api) Run() (err error) {
 	handler.SetRoutes(
 		&rest.Route{"GET", "/api/:imgid/:count", GetIDstuff},
 		&rest.Route{"GET", "/api/r/:imgid/:count", GetIDstuffReverse},
+		&rest.Route{"GET", "/api/u/:user", GetImagesByUser},
 		&rest.Route{"GET", "/.status",
 			func(w rest.ResponseWriter, r *rest.Request) {
 				w.WriteJson(handler.GetStatus())
@@ -70,6 +72,25 @@ func (a *Api) Run() (err error) {
 	)
 	http.ListenAndServe(a.Addr, &handler)
 	return nil
+}
+
+func GetImagesByUser(w rest.ResponseWriter, r *rest.Request) {
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	var imgreturn []Image
+
+	user, err := r.PathParam("user")
+	if err != nil {
+		log.Printf("asdf")
+		rest.Error("w", "User not found", 405)
+	}
+
+	dbase, err := Db.NewDb()
+	if err != nil {
+		log.Printf("asdfddd")
+		rest.Error(w, "Could not open Databaseconnection", 405)
+	}
+
+	images, err := dbase.GetImagesByUser(user)
 }
 
 func GetIDstuffReverse(w rest.ResponseWriter, r *rest.Request) {
