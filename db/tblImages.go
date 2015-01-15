@@ -79,19 +79,19 @@ func (db *Db) GetImageByHash(hash string) (result Image, err error) {
 }
 
 func (db *Db) GetImagesByUser(user string) (result []Image, err error) {
-	//result = make(Image{})
 	result = []Image{}
 	if user == "" {
 		errors.New("User is empty.")
 		return
 	}
 
-	query := "SELECT * FROM " + db.DbImageTable + " WHERE user = ?;"
+	query := "SELECT * FROM " + db.DbImageTable + " WHERE user = ?"
 	rows, err := db.query(query, user)
 	defer rows.Close()
 	if err != nil {
 		return result, err
 	}
+
 	for rows.Next() {
 		img := Image{}
 		err = rows.Scan(

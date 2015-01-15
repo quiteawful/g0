@@ -75,20 +75,19 @@ func (a *Api) Run() (err error) {
 }
 
 func GetImagesByUser(w rest.ResponseWriter, r *rest.Request) {
-	log.Println("getimagesbyuser")
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
 	user := r.PathParam("user")
 	if user == "" {
-		log.Printf("asdf")
-		rest.Error(w, "User not found", 405)
+		log.Printf("No input for parameter user")
+		rest.Error(w, "NYAN not found", 405)
 	}
-	log.Printf("Images by user: %s\n", user)
+
 	dbase, err := Db.NewDb()
 	if err != nil {
-		log.Printf("asdfddd")
-		rest.Error(w, "Could not open Databaseconnection", 405)
+		log.Printf("Could not open a connection to the database")
+		rest.Error(w, "NYAN not found", 405)
 	}
 
 	images, err := dbase.GetImagesByUser(user)
@@ -114,7 +113,6 @@ func GetImagesByUser(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func GetIDstuffReverse(w rest.ResponseWriter, r *rest.Request) {
-	log.Println("getidstuffreverse")
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
@@ -167,7 +165,6 @@ func GetIDstuffReverse(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
-	log.Println("getidstuff")
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
