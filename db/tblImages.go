@@ -78,6 +78,43 @@ func (db *Db) GetImageByHash(hash string) (result Image, err error) {
 	return result, nil
 }
 
+func (db *Db) GetImagesByUser(user string) (result []Image, err error) {
+	//result = make(Image{})
+	result = []Image{}
+	if user == "" {
+		errors.New("User is empty.")
+		return
+	}
+
+	query := "SELECT * FROM " + db.DbImageTable + " WHERE user = ?;"
+	rows, err := db.query(query, user)
+	defer rows.Close()
+	if err != nil {
+		return result, err
+	}
+	for rows.Next() {
+		img := Image{}
+		err = rows.Scan(
+			&img.Id,
+			&img.Hash,
+			&img.Name,
+			&img.Thumbnail,
+			&img.Timestamp,
+			&img.Url,
+			&img.Network,
+			&img.Channel,
+			&img.User)
+
+		if err != nil {
+			log.Printf("Db.GetImages: %s\n", err)
+			return result, err
+		}
+
+		result = append(result, img)
+	}
+	return result, nil
+}
+
 func (db *Db) GetImage(id int) (result Image, err error) {
 	if id < 1 {
 		err = errors.New("No id found.")
@@ -107,6 +144,7 @@ func (db *Db) GetImage(id int) (result Image, err error) {
 	}
 	return result, nil
 }
+
 func (db *Db) GetPreviousImagesBefore(id, n int) (result []Image, err error) {
 	var strId string = strconv.Itoa(id)
 	var strN string = strconv.Itoa(n)
@@ -135,15 +173,10 @@ func (db *Db) GetPreviousImagesBefore(id, n int) (result []Image, err error) {
 			&img.Channel,
 			&img.User)
 
-		if err != nil {
-			log.Printf("Db.GetLatestImages: %s\n", err)
-			return nil, err
-		}
-
+		////if err != nil {
 		result = append(result, img)
 	}
 	return result, nil
-
 }
 
 func (db *Db) GetLatestImages(id, n int) (result []Image, err error) {

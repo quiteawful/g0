@@ -61,8 +61,8 @@ func (a *Api) Run() (err error) {
 	}
 	handler.SetRoutes(
 		&rest.Route{"GET", "/api/:imgid/:count", GetIDstuff},
+		&rest.Route{"GET", "/api/u/:user/:count", GetImagesByUser},
 		&rest.Route{"GET", "/api/r/:imgid/:count", GetIDstuffReverse},
-		&rest.Route{"GET", "/api/u/:user", GetImagesByUser},
 		&rest.Route{"GET", "/.status",
 			func(w rest.ResponseWriter, r *rest.Request) {
 				w.WriteJson(handler.GetStatus())
@@ -75,15 +75,16 @@ func (a *Api) Run() (err error) {
 }
 
 func GetImagesByUser(w rest.ResponseWriter, r *rest.Request) {
+	log.Println("getimagesbyuser")
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
-	user, err := r.PathParam("user")
-	if err != nil {
+	user := r.PathParam("user")
+	if user == "" {
 		log.Printf("asdf")
-		rest.Error("w", "User not found", 405)
+		rest.Error(w, "User not found", 405)
 	}
-
+	log.Printf("Images by user: %s\n", user)
 	dbase, err := Db.NewDb()
 	if err != nil {
 		log.Printf("asdfddd")
@@ -91,9 +92,29 @@ func GetImagesByUser(w rest.ResponseWriter, r *rest.Request) {
 	}
 
 	images, err := dbase.GetImagesByUser(user)
+	for _, ele := range images {
+		var tmpImage Image
+		tmpImage.ID = strconv.Itoa(ele.Id)
+		tmpImage.Img = ele.Name
+		tmpImage.Thumb = ele.Thumbnail
+		tmpImage.Date = ele.Timestamp.Unix()
+		tmpImage.Nick = ele.User
+		tmpImage.Chan = ele.Channel
+		tmpImage.Link = ele.Url
+		imgreturn = append(imgreturn, tmpImage)
+	}
+	w.WriteJson(
+		&IDTest{
+			ImageSrc: "http://aidskrebs.net/images/",
+			ThumbSrc: "http://aidskrebs.net/images/",
+			Images:   imgreturn,
+		})
+
+	return
 }
 
 func GetIDstuffReverse(w rest.ResponseWriter, r *rest.Request) {
+	log.Println("getidstuffreverse")
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
@@ -146,6 +167,7 @@ func GetIDstuffReverse(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
+	log.Println("getidstuff")
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	var imgreturn []Image
 
