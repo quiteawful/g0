@@ -109,6 +109,10 @@ func parseIrcMsg(e *irc.Event, b *Bot) {
 			return // nope-ing out
 		}
 		urlString := urlregex.FindStringSubmatch(e.Message())[0]
+		//dont do shit if it is a aidkrebs link, but not i.aids...
+		if strings.Contains(urlString, "aidskrebs") && !strings.Contains(urlString, "i.aidskrebs") {
+			return
+		}
 		if ircch := e.Arguments[0]; chprefixes[ircch[0]] {
 			b.LinkChannel <- Link{urlString, b.Connections[0].Network, ircch, e.Nick}
 		}
