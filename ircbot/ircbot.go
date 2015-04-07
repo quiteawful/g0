@@ -135,7 +135,6 @@ func parseIrcMsg(e *irc.Event, b *Bot) {
 }
 
 func printHalp(ch string, b *Bot) {
-
-	b.Connections[0].Connection.Privmsg(ch, "!nope <url>:		skip link")
-	b.Connections[0].Connection.Privmsg(ch, "!del   <id>:		delete image")
+	b.Connections[0].Connection.Privmsg(ch, "!nope <url>: skip link")
+	b.Connections[0].Connection.Privmsg(ch, "!del <id>: delete image")
 }
