@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/quiteawful/g0/api"
 	"github.com/quiteawful/g0/conf"
@@ -79,6 +80,9 @@ func saveImage(link IrcBot.Link, dbase *Db.Db, bot *IrcBot.Bot) {
 			img, err := dbase.GetImageByHash(hash)
 			if err != nil {
 				log.Println("Sending AAAALT-Infos:", err.Error())
+				return
+			}
+			if strings.Contains(link.Message, "*repost*") {
 				return
 			}
 			fmtstr := fmt.Sprintf("AAAALT: http://aidskrebs.net/?offset=%d", img.Id)
