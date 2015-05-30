@@ -108,6 +108,9 @@ func parseIrcMsg(e *irc.Event, b *Bot) {
 		if strings.HasPrefix(e.Message(), "!nope") {
 			return // nope-ing out
 		}
+		if strings.Contains("*repost*") {
+			return //
+		}
 		urlString := urlregex.FindStringSubmatch(e.Message())[0]
 		//dont do shit if it is a aidkrebs link, but not i.aids...
 		if strings.Contains(urlString, "aidskrebs") && !strings.Contains(urlString, "i.aidskrebs") {
