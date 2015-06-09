@@ -4,8 +4,10 @@ package Api
 import (
 	"errors"
 	"log"
+	"mime"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/ant0ine/go-json-rest/rest"
 	"github.com/quiteawful/g0/conf"
@@ -25,6 +27,7 @@ type Image struct {
 	Nick  string `json:"user"`
 	Chan  string `json:"channel"`
 	Link  string `json:"source"`
+	Type  string `json:"type"`
 }
 
 type Api struct {
@@ -100,6 +103,7 @@ func GetImagesByUser(w rest.ResponseWriter, r *rest.Request) {
 		tmpImage.Nick = ele.User
 		tmpImage.Chan = ele.Channel
 		tmpImage.Link = ele.Url
+		tmpImage.Type = getFileType(ele.Name)
 		imgreturn = append(imgreturn, tmpImage)
 	}
 	w.WriteJson(
@@ -154,6 +158,7 @@ func GetIDstuffReverse(w rest.ResponseWriter, r *rest.Request) {
 		tmpImage.Nick = ele.User
 		tmpImage.Chan = ele.Channel
 		tmpImage.Link = ele.Url
+		tmpImage.Type = getFileType(ele.Name)
 		imgreturn = append(imgreturn, tmpImage)
 	}
 	w.WriteJson(
@@ -196,6 +201,7 @@ func GetIDstuff(w rest.ResponseWriter, r *rest.Request) {
 		tmpImage.Nick = ele.User
 		tmpImage.Chan = ele.Channel
 		tmpImage.Link = ele.Url
+		tmpImage.Type = getFileType(ele.Name)
 		imgreturn = append(imgreturn, tmpImage)
 	}
 	w.WriteJson(
@@ -216,4 +222,16 @@ func GetStatistics(w rest.ResponseWriter, r *rest.Request) {
 
 	stats := dbase.GetStatistics()
 	w.WriteJson(stats)
+}
+
+func getFileType(fname string) string {
+	tmp := strings.Split(mime.TypeByExtension(fname), "/")
+	if len(tmp) < 2 {
+		return "nil"
+	}
+	if len(tmp) == 2 {
+		return tmp[0]
+	}
+
+	return "derp"
 }
